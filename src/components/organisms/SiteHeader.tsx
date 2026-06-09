@@ -1,20 +1,15 @@
 import Link from "next/link";
-import { Waves } from "lucide-react";
 
 /** Barra de marca fixa no topo, presente em todas as páginas. */
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur">
-      <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-teal-500 text-white">
-            <Waves className="h-4 w-4" />
-          </span>
-          <span className="flex flex-col leading-none">
-            <span className="text-sm font-bold tracking-tight text-slate-900">
-              Seazone
-            </span>
-            <span className="text-[11px] text-slate-500">Guia do Hóspede</span>
+      <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
+        <Link href="/" className="flex items-center gap-3" aria-label="Seazone — início">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logoSeazone.svg" alt="Seazone" className="h-5 w-auto" />
+          <span className="border-l border-slate-300 pl-3 text-sm text-slate-500">
+            Guia do Hóspede
           </span>
         </Link>
       </div>
