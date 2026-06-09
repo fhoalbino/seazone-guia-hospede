@@ -22,7 +22,7 @@ export function ChatWidget({ code }: { code: string }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, regenerate, status, error } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat", body: { code } }),
   });
 
@@ -104,9 +104,16 @@ export function ChatWidget({ code }: { code: string }) {
             )}
 
             {error && (
-              <p className="text-sm text-rose-600">
-                Ops, algo deu errado. Tente novamente.
-              </p>
+              <div className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700 ring-1 ring-rose-200">
+                Ops, algo deu errado ao responder.{" "}
+                <button
+                  type="button"
+                  onClick={() => regenerate()}
+                  className="font-medium underline underline-offset-2 hover:text-rose-900"
+                >
+                  Tentar de novo
+                </button>
+              </div>
             )}
           </div>
 

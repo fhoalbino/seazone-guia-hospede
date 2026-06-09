@@ -78,6 +78,18 @@ _grounding_ anti-alucinação entram no system prompt).
   streaming). Centralizado em `lib/ai.ts`.
 - **Atomic Design.** Componentes em `atoms / molecules / organisms`.
 
+## Melhorias futuras
+
+- **Ancorar o guia com Google Places API.** Hoje os lugares vêm do conhecimento
+  do LLM (ótimo para cidades conhecidas, mas pode ser impreciso em localidades
+  pequenas). O próximo passo é geocodificar o endereço e buscar restaurantes,
+  atrações e serviços reais via Google Places — usando o LLM apenas para
+  curadoria e redação dos textos. Isso garante distâncias e estabelecimentos
+  verificados.
+- **Consumir a API pública de reservas da Seazone** para dados reais dos imóveis,
+  no lugar do seed de referência.
+- Cache/regeneração programada do guia (ex: atualizar a dica sazonal por mês).
+
 ## Estrutura
 
 ```
