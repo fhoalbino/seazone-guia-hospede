@@ -15,27 +15,8 @@ const AMENITY_LABELS: Record<string, string> = {
   heating: "Aquecimento",
 };
 
-const AMENITY_ICONS: Record<string, string> = {
-  wifi: "📶",
-  tv: "📺",
-  air_conditioning: "❄️",
-  kitchen: "🍳",
-  washing_machine: "🧺",
-  elevator: "🛗",
-  balcony: "🌅",
-  bbq_grill: "🔥",
-  dishwasher: "🍽️",
-  pool: "🏊",
-  parking: "🅿️",
-  heating: "🔥",
-};
-
 export function amenityLabel(key: string): string {
   return AMENITY_LABELS[key] ?? key.replace(/_/g, " ");
-}
-
-export function amenityIcon(key: string): string {
-  return AMENITY_ICONS[key] ?? "✓";
 }
 
 const ACCESS_TYPE_LABELS: Record<string, string> = {

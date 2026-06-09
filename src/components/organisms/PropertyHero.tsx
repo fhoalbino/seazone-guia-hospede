@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { Bath, BedDouble, MapPin, Users } from "lucide-react";
+import type { ReactNode } from "react";
 import { Badge } from "@/components/atoms/Badge";
 import type { Property } from "@/lib/types";
 
@@ -31,20 +33,29 @@ export function PropertyHero({ property }: PropertyHeroProps) {
           <h1 className="mt-2 text-2xl font-bold drop-shadow-sm">
             {property.name}
           </h1>
-          <p className="mt-1 text-sm text-white/90">
-            📍 {address.neighborhood}, {address.city} — {address.state}
+          <p className="mt-1 flex items-center gap-1 text-sm text-white/90">
+            <MapPin className="h-4 w-4 shrink-0" />
+            {address.neighborhood}, {address.city} — {address.state}
           </p>
         </div>
       </div>
 
       <dl className="grid grid-cols-3 gap-3 p-5 text-center">
-        <Capacity label="Quartos" value={property.bedroomQuantity} icon="🛏️" />
+        <Capacity
+          label="Quartos"
+          value={property.bedroomQuantity}
+          icon={<BedDouble className="h-5 w-5" />}
+        />
         <Capacity
           label="Banheiros"
           value={property.bathroomQuantity}
-          icon="🚿"
+          icon={<Bath className="h-5 w-5" />}
         />
-        <Capacity label="Hóspedes" value={property.guestCapacity} icon="👥" />
+        <Capacity
+          label="Hóspedes"
+          value={property.guestCapacity}
+          icon={<Users className="h-5 w-5" />}
+        />
       </dl>
     </header>
   );
@@ -57,12 +68,12 @@ function Capacity({
 }: {
   label: string;
   value: number;
-  icon: string;
+  icon: ReactNode;
 }) {
   return (
     <div className="rounded-xl bg-slate-50 py-3 ring-1 ring-slate-200">
-      <dd className="text-xl font-semibold text-slate-800">
-        <span aria-hidden className="mr-1">
+      <dd className="flex items-center justify-center gap-1.5 text-xl font-semibold text-slate-800">
+        <span aria-hidden className="text-sky-600">
           {icon}
         </span>
         {value}

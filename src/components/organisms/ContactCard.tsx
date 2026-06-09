@@ -1,3 +1,4 @@
+import { MessageCircle, Phone } from "lucide-react";
 import { Section } from "@/components/atoms/Section";
 import { formatPhone, whatsappLink } from "@/lib/labels";
 import type { Property } from "@/lib/types";
@@ -19,7 +20,7 @@ export function ContactCard({ host, address }: ContactCardProps) {
     .join(" · ");
 
   return (
-    <Section title="Contato e endereço" icon="📞">
+    <Section title="Contato e endereço" icon={<Phone className="h-5 w-5" />}>
       <div className="flex flex-col gap-1">
         <p className="text-sm text-slate-500">Anfitrião</p>
         <p className="font-medium text-slate-800">{host.name}</p>
@@ -29,7 +30,8 @@ export function ContactCard({ host, address }: ContactCardProps) {
           rel="noopener noreferrer"
           className="mt-1 inline-flex w-fit items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200 transition hover:bg-emerald-100"
         >
-          💬 {formatPhone(host.phone)}
+          <MessageCircle className="h-4 w-4" />
+          {formatPhone(host.phone)}
         </a>
       </div>
 

@@ -1,5 +1,6 @@
+import { Check } from "lucide-react";
 import { Badge } from "@/components/atoms/Badge";
-import { amenityIcon, amenityLabel } from "@/lib/labels";
+import { amenityLabel } from "@/lib/labels";
 import type { Amenities } from "@/lib/types";
 
 interface AmenityListProps {
@@ -20,7 +21,7 @@ export function AmenityList({ amenities }: AmenityListProps) {
     <div className="flex flex-wrap gap-2">
       {active.map((key) => (
         <Badge key={key} tone="neutral">
-          <span aria-hidden>{amenityIcon(key)}</span>
+          <Check className="h-3.5 w-3.5 text-sky-600" />
           {amenityLabel(key)}
         </Badge>
       ))}

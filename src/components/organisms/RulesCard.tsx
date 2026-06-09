@@ -1,3 +1,4 @@
+import { Check, ClipboardList, X } from "lucide-react";
 import { Section } from "@/components/atoms/Section";
 import { InfoRow } from "@/components/atoms/InfoRow";
 import { Badge } from "@/components/atoms/Badge";
@@ -10,7 +11,12 @@ interface RulesCardProps {
 function PolicyBadge({ label, allowed }: { label: string; allowed: boolean }) {
   return (
     <Badge tone={allowed ? "positive" : "negative"}>
-      {allowed ? "✓" : "✕"} {label}
+      {allowed ? (
+        <Check className="h-3.5 w-3.5" />
+      ) : (
+        <X className="h-3.5 w-3.5" />
+      )}
+      {label}
     </Badge>
   );
 }
@@ -18,7 +24,7 @@ function PolicyBadge({ label, allowed }: { label: string; allowed: boolean }) {
 /** Horários e políticas da estadia. */
 export function RulesCard({ rules }: RulesCardProps) {
   return (
-    <Section title="Regras da estadia" icon="📋">
+    <Section title="Regras da estadia" icon={<ClipboardList className="h-5 w-5" />}>
       <InfoRow label="Check-in">a partir das {rules.checkInTime}</InfoRow>
       <InfoRow label="Check-out">até {rules.checkOutTime}</InfoRow>
 

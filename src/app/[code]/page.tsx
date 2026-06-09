@@ -14,6 +14,7 @@ import { ChatWidget } from "@/components/organisms/ChatWidget";
 import { AmenityList } from "@/components/molecules/AmenityList";
 import { Section } from "@/components/atoms/Section";
 import { Reveal } from "@/components/atoms/Reveal";
+import { Sparkles } from "lucide-react";
 
 export async function generateStaticParams() {
   const codes = await getAllPropertyCodes();
@@ -47,7 +48,7 @@ export default async function PropertyGuidePage({
       </Reveal>
 
       <Reveal delay={0.05}>
-        <Section title="Amenidades" icon="✨">
+        <Section title="Amenidades" icon={<Sparkles className="h-5 w-5" />}>
           <AmenityList amenities={property.amenities} />
         </Section>
       </Reveal>

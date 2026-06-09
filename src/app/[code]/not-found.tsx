@@ -1,11 +1,10 @@
 import Link from "next/link";
+import { Compass } from "lucide-react";
 
 export default function PropertyNotFound() {
   return (
     <main className="mx-auto flex min-h-[70vh] w-full max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
-      <span className="text-5xl" aria-hidden>
-        🧭
-      </span>
+      <Compass className="h-14 w-14 text-sky-600" aria-hidden />
       <h1 className="text-2xl font-bold text-slate-900">
         Imóvel não encontrado
       </h1>

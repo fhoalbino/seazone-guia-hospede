@@ -5,6 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Drawer } from "vaul";
 import { AnimatePresence, motion } from "motion/react";
+import { MessageCircle, Trash2, X } from "lucide-react";
 import { Markdown } from "@/components/atoms/Markdown";
 
 const SUGGESTIONS = [
@@ -25,9 +26,10 @@ export function ChatWidget({ code }: { code: string }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, regenerate, status, error } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat", body: { code } }),
-  });
+  const { messages, sendMessage, regenerate, setMessages, status, error } =
+    useChat({
+      transport: new DefaultChatTransport({ api: "/api/chat", body: { code } }),
+    });
 
   const busy = status === "submitted" || status === "streaming";
 
@@ -45,26 +47,50 @@ export function ChatWidget({ code }: { code: string }) {
         onClick={() => setOpen(true)}
         whileTap={{ scale: 0.9 }}
         whileHover={{ scale: 1.05 }}
-        className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-sky-600 text-2xl text-white shadow-lg"
+        className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-sky-600 text-white shadow-lg"
         aria-label="Abrir assistente virtual"
       >
-        💬
+        <MessageCircle className="h-6 w-6" />
       </motion.button>
 
       <Drawer.Root open={open} onOpenChange={setOpen}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
           <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 flex h-[82vh] flex-col overflow-hidden rounded-t-2xl bg-white outline-none sm:inset-x-auto sm:right-5 sm:h-[620px] sm:w-[26rem]">
-            {/* alça de arrastar */}
-            <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-slate-300" />
+            {/* alça de arrastar (mobile) */}
+            <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-slate-300 sm:hidden" />
 
-            <div className="px-4 pt-3 pb-2">
-              <Drawer.Title className="text-base font-semibold text-slate-900">
-                Assistente da estadia
-              </Drawer.Title>
-              <Drawer.Description className="text-xs text-slate-500">
-                Tire dúvidas sobre o imóvel e a região
-              </Drawer.Description>
+            <div className="flex items-start justify-between gap-2 px-4 pt-3 pb-2 sm:pt-4">
+              <div>
+                <Drawer.Title className="text-base font-semibold text-slate-900">
+                  Assistente da estadia
+                </Drawer.Title>
+                <Drawer.Description className="text-xs text-slate-500">
+                  Tire dúvidas sobre o imóvel e a região
+                </Drawer.Description>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                {messages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setMessages([])}
+                    className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                    aria-label="Limpar conversa"
+                    title="Limpar conversa"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="hidden rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 sm:inline-flex"
+                  aria-label="Fechar"
+                  title="Fechar"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 space-y-3 overflow-y-auto border-t border-slate-100 p-4">

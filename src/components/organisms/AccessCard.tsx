@@ -1,3 +1,4 @@
+import { KeyRound } from "lucide-react";
 import { Section } from "@/components/atoms/Section";
 import { InfoRow } from "@/components/atoms/InfoRow";
 import { CopyField } from "@/components/molecules/CopyField";
@@ -11,7 +12,7 @@ interface AccessCardProps {
 /** WiFi, instruções de acesso ao imóvel e estacionamento. */
 export function AccessCard({ operational }: AccessCardProps) {
   return (
-    <Section title="Acesso e WiFi" icon="🔑">
+    <Section title="Acesso e WiFi" icon={<KeyRound className="h-5 w-5" />}>
       <div className="flex flex-col gap-3">
         <CopyField label="Rede WiFi" value={operational.wifiNetwork} />
         <CopyField label="Senha WiFi" value={operational.wifiPassword} />
