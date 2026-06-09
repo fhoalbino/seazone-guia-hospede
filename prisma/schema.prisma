@@ -58,18 +58,15 @@ model Property {
   hostName  String
   hostPhone String
 
-  // Guia de experiências gerado por IA (1:1, persistido — não regenera)
-  guide ExperienceGuide?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-/// Guia de experiências gerado por IA para um imóvel. Persistido para não regenerar a cada acesso.
+/// Guia de experiências gerado por IA, persistido por código de imóvel
+/// (de qualquer fonte — seed ou API Seazone) para não regenerar a cada acesso.
 model ExperienceGuide {
-  id           Int      @id @default(autoincrement())
-  propertyCode String   @unique
-  property     Property @relation(fields: [propertyCode], references: [code], onDelete: Cascade)
+  id           Int    @id @default(autoincrement())
+  propertyCode String @unique
 
   welcomeMessage String
   restaurants    Json // [{ name, distance, description }]

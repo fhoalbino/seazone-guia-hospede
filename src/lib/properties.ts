@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { fetchSeazoneProperty } from "@/lib/seazone-api";
 import type { Amenities, Property } from "@/lib/types";
 import type { PropertyModel as PropertyRow } from "@/generated/prisma/models";
 
@@ -49,12 +50,21 @@ function toProperty(row: PropertyRow): Property {
   };
 }
 
-/** Busca um imóvel pelo código (ex: FLN001). Normaliza para maiúsculas. Retorna null se não existir. */
+/**
+ * Busca um imóvel pelo código (ex: FLN001). Normaliza para maiúsculas.
+ * Camada de dados híbrida: usa o seed local (imóveis-exemplo do desafio) e,
+ * se não encontrar, consulta a API pública da Seazone (imóveis reais).
+ * Retorna null se não existir em nenhuma fonte.
+ */
 export async function getProperty(code: string): Promise<Property | null> {
+  const normalized = code.toUpperCase();
+
   const row = await prisma.property.findUnique({
-    where: { code: code.toUpperCase() },
+    where: { code: normalized },
   });
-  return row ? toProperty(row) : null;
+  if (row) return toProperty(row);
+
+  return fetchSeazoneProperty(normalized);
 }
 
 /** Lista todos os códigos de imóvel — usado para gerar páginas estáticas. */

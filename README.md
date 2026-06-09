@@ -10,7 +10,11 @@ dúvidas sobre o imóvel em tempo real.
 ## Demo
 
 - **App:** _<adicionar URL da Vercel após o deploy>_
-- Imóveis de exemplo: `/FLN001` (Florianópolis/SC) e `/GRM001` (Gramado/RS)
+- Imóveis de exemplo (dados do desafio): `/FLN001` (Florianópolis/SC) e
+  `/GRM001` (Gramado/RS)
+- Imóveis **reais** (via API pública da Seazone): `/AMC0204` (Florianópolis),
+  `/CDK0011` (Porto Seguro/BA), `/SPT0205` (Blumenau/SC) — note como o guia da
+  região muda conforme a localização real
 - Código inexistente cai numa tela de erro amigável (ex: `/XXX999`)
 
 ## Funcionalidades
@@ -40,7 +44,8 @@ npm run db:seed             # popula os 2 imóveis de exemplo
 npm run dev                 # http://localhost:3000
 ```
 
-Acesse `http://localhost:3000/FLN001`.
+Acesse `http://localhost:3000/FLN001` (exemplo do desafio) ou um código real
+como `http://localhost:3000/AMC0204` (buscado na API da Seazone).
 
 ### Variáveis de ambiente
 
@@ -61,9 +66,18 @@ _grounding_ anti-alucinação entram no system prompt).
 
 ## Decisões técnicas
 
-- **Camada de dados em Postgres (Prisma 7).** Os imóveis e os guias de
-  experiências ficam no banco. Prisma 7 exige driver adapter — usamos
-  `@prisma/adapter-pg`. A mesma `DATABASE_URL` serve dev e produção.
+- **Camada de dados híbrida.** `getProperty(code)` resolve em duas fontes: primeiro
+  o seed local (imóveis-exemplo do desafio, `FLN001`/`GRM001`), e, se não encontrar,
+  a **API pública da Seazone** (`/properties/{code}/details` + amenidades) —
+  qualquer código real funciona (ex: `AMC0204`). Persistência em Postgres via
+  Prisma 7 com driver adapter (`@prisma/adapter-pg`); a mesma `DATABASE_URL` serve
+  dev e produção.
+- **Fronteira de dados sensíveis.** A API pública não expõe segredos da estadia
+  (senha do WiFi, código da fechadura, telefone do anfitrião) — eles só são
+  liberados ao hóspede após a reserva, via endpoint autenticado (com PIN). Para a
+  demonstração esses campos são gerados de forma determinística por código
+  (`lib/operational-mock.ts`); em produção viriam de `GET /reservations/details`
+  após o check-in.
 - **Guia de IA persistido.** `getOrCreateGuide` lê do banco se já existe; senão
   gera com `generateObject` + schema **Zod** (saída estruturada e validada) e
   salva. Atende à regra de "não regenerar a cada acesso".
@@ -85,9 +99,9 @@ _grounding_ anti-alucinação entram no system prompt).
   pequenas). O próximo passo é geocodificar o endereço e buscar restaurantes,
   atrações e serviços reais via Google Places — usando o LLM apenas para
   curadoria e redação dos textos. Isso garante distâncias e estabelecimentos
-  verificados.
-- **Consumir a API pública de reservas da Seazone** para dados reais dos imóveis,
-  no lugar do seed de referência.
+  verificados (a API da Seazone já fornece latitude/longitude de cada imóvel).
+- Integrar os dados sensíveis da estadia ao endpoint autenticado de reserva
+  (`/reservations/details` com PIN), substituindo o mock de demonstração.
 - Cache/regeneração programada do guia (ex: atualizar a dica sazonal por mês).
 
 ## Estrutura
@@ -97,6 +111,6 @@ prisma/            schema, migrations e seed
 src/
   app/             rotas (/[code], home, api/chat)
   components/      atoms, molecules, organisms
-  lib/             db, ai, properties, guide, chat-context, labels, types
+  lib/             db, ai, properties, seazone-api, guide, chat-context, labels, types
   generated/       client Prisma (gerado)
 ```
