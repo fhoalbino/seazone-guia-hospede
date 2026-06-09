@@ -13,6 +13,7 @@ import {
 import { ChatWidget } from "@/components/organisms/ChatWidget";
 import { AmenityList } from "@/components/molecules/AmenityList";
 import { Section } from "@/components/atoms/Section";
+import { Reveal } from "@/components/atoms/Reveal";
 
 export async function generateStaticParams() {
   const codes = await getAllPropertyCodes();
@@ -41,20 +42,30 @@ export default async function PropertyGuidePage({
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-6">
-      <PropertyHero property={property} />
+      <Reveal>
+        <PropertyHero property={property} />
+      </Reveal>
 
-      <Section title="Amenidades" icon="✨">
-        <AmenityList amenities={property.amenities} />
-      </Section>
+      <Reveal delay={0.05}>
+        <Section title="Amenidades" icon="✨">
+          <AmenityList amenities={property.amenities} />
+        </Section>
+      </Reveal>
 
-      <AccessCard operational={property.operational} />
-      <RulesCard rules={property.rules} />
+      <Reveal delay={0.1}>
+        <AccessCard operational={property.operational} />
+      </Reveal>
+      <Reveal delay={0.15}>
+        <RulesCard rules={property.rules} />
+      </Reveal>
 
       <Suspense fallback={<ExperienceGuideSkeleton />}>
         <ExperienceGuide property={property} />
       </Suspense>
 
-      <ContactCard host={property.host} address={property.address} />
+      <Reveal delay={0.2}>
+        <ContactCard host={property.host} address={property.address} />
+      </Reveal>
 
       <ChatWidget code={property.code} />
     </main>

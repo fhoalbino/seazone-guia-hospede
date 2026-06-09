@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
+import { Drawer } from "vaul";
+import { AnimatePresence, motion } from "motion/react";
 
 const SUGGESTIONS = [
   "Qual a senha do WiFi?",
@@ -37,109 +39,122 @@ export function ChatWidget({ code }: { code: string }) {
 
   return (
     <>
-      {/* Botão flutuante */}
-      <button
+      <motion.button
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-sky-600 text-2xl text-white shadow-lg transition hover:bg-sky-700 active:scale-95"
-        aria-label={open ? "Fechar assistente" : "Abrir assistente virtual"}
+        onClick={() => setOpen(true)}
+        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-sky-600 text-2xl text-white shadow-lg"
+        aria-label="Abrir assistente virtual"
       >
-        {open ? "✕" : "💬"}
-      </button>
+        💬
+      </motion.button>
 
-      {/* Painel */}
-      {open && (
-        <div className="fixed inset-x-0 bottom-0 z-30 flex h-[80vh] flex-col rounded-t-2xl bg-white shadow-2xl ring-1 ring-slate-200 sm:inset-x-auto sm:bottom-24 sm:right-5 sm:h-[32rem] sm:w-96 sm:rounded-2xl">
-          <header className="rounded-t-2xl bg-sky-600 px-4 py-3 text-white">
-            <p className="font-semibold">Assistente da estadia</p>
-            <p className="text-xs text-sky-100">
-              Tire dúvidas sobre o imóvel e a região
-            </p>
-          </header>
+      <Drawer.Root open={open} onOpenChange={setOpen}>
+        <Drawer.Portal>
+          <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
+          <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto flex h-[82vh] max-w-lg flex-col rounded-t-2xl bg-white outline-none">
+            {/* alça de arrastar */}
+            <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-slate-300" />
 
-          <div className="flex-1 space-y-3 overflow-y-auto p-4">
-            {messages.length === 0 && (
-              <div className="space-y-3">
-                <p className="text-sm text-slate-500">
-                  Olá! 👋 Como posso ajudar? Experimente:
-                </p>
-                <div className="flex flex-col gap-2">
-                  {SUGGESTIONS.map((q) => (
-                    <button
-                      key={q}
-                      type="button"
-                      onClick={() => send(q)}
-                      className="rounded-xl bg-slate-50 px-3 py-2 text-left text-sm text-slate-700 ring-1 ring-slate-200 transition hover:bg-sky-50 hover:ring-sky-200"
-                    >
-                      {q}
-                    </button>
-                  ))}
+            <div className="px-4 pt-3 pb-2">
+              <Drawer.Title className="text-base font-semibold text-slate-900">
+                Assistente da estadia
+              </Drawer.Title>
+              <Drawer.Description className="text-xs text-slate-500">
+                Tire dúvidas sobre o imóvel e a região
+              </Drawer.Description>
+            </div>
+
+            <div className="flex-1 space-y-3 overflow-y-auto border-t border-slate-100 p-4">
+              {messages.length === 0 && (
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-500">
+                    Olá! 👋 Como posso ajudar? Experimente:
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {SUGGESTIONS.map((q) => (
+                      <button
+                        key={q}
+                        type="button"
+                        onClick={() => send(q)}
+                        className="rounded-xl bg-slate-50 px-3 py-2 text-left text-sm text-slate-700 ring-1 ring-slate-200 transition hover:bg-sky-50 hover:ring-sky-200"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={m.role === "user" ? "text-right" : "text-left"}
-              >
-                <span
-                  className={`inline-block max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm ${
-                    m.role === "user"
-                      ? "bg-sky-600 text-white"
-                      : "bg-slate-100 text-slate-800"
-                  }`}
-                >
-                  {messageText(m.parts)}
-                </span>
-              </div>
-            ))}
+              <AnimatePresence initial={false}>
+                {messages.map((m) => (
+                  <motion.div
+                    key={m.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className={m.role === "user" ? "text-right" : "text-left"}
+                  >
+                    <span
+                      className={`inline-block max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm ${
+                        m.role === "user"
+                          ? "bg-sky-600 text-white"
+                          : "bg-slate-100 text-slate-800"
+                      }`}
+                    >
+                      {messageText(m.parts)}
+                    </span>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
 
-            {status === "submitted" && (
-              <div className="text-left">
-                <span className="inline-flex gap-1 rounded-2xl bg-slate-100 px-3 py-2.5">
-                  <Dot /> <Dot delay={150} /> <Dot delay={300} />
-                </span>
-              </div>
-            )}
+              {status === "submitted" && (
+                <div className="text-left">
+                  <span className="inline-flex gap-1 rounded-2xl bg-slate-100 px-3 py-2.5">
+                    <Dot /> <Dot delay={150} /> <Dot delay={300} />
+                  </span>
+                </div>
+              )}
 
-            {error && (
-              <div className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700 ring-1 ring-rose-200">
-                Ops, algo deu errado ao responder.{" "}
-                <button
-                  type="button"
-                  onClick={() => regenerate()}
-                  className="font-medium underline underline-offset-2 hover:text-rose-900"
-                >
-                  Tentar de novo
-                </button>
-              </div>
-            )}
-          </div>
+              {error && (
+                <div className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700 ring-1 ring-rose-200">
+                  Ops, algo deu errado ao responder.{" "}
+                  <button
+                    type="button"
+                    onClick={() => regenerate()}
+                    className="font-medium underline underline-offset-2 hover:text-rose-900"
+                  >
+                    Tentar de novo
+                  </button>
+                </div>
+              )}
+            </div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send(input);
-            }}
-            className="flex gap-2 border-t border-slate-100 p-3"
-          >
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Digite sua pergunta…"
-              className="flex-1 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-800 ring-1 ring-slate-200 outline-none focus:ring-sky-300"
-            />
-            <button
-              type="submit"
-              disabled={busy || !input.trim()}
-              className="rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 disabled:opacity-40"
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                send(input);
+              }}
+              className="flex gap-2 border-t border-slate-100 p-3"
             >
-              Enviar
-            </button>
-          </form>
-        </div>
-      )}
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Digite sua pergunta…"
+                className="flex-1 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-800 ring-1 ring-slate-200 outline-none focus:ring-sky-300"
+              />
+              <button
+                type="submit"
+                disabled={busy || !input.trim()}
+                className="rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 disabled:opacity-40"
+              >
+                Enviar
+              </button>
+            </form>
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
     </>
   );
 }
