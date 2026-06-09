@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Guia Digital do Hóspede — Seazone
 
-## Getting Started
+Guia digital personalizado por imóvel. Cada propriedade tem um link único
+(ex: `/FLN001`) com dados da estadia, um **guia de experiências gerado por IA**
+contextualizado pelo endereço real, e um **assistente virtual** que responde
+dúvidas sobre o imóvel em tempo real.
 
-First, run the development server:
+> Desafio técnico — vaga Desenvolvedor Fullstack (AI Builder).
+
+## Demo
+
+- **App:** _<adicionar URL da Vercel após o deploy>_
+- Imóveis de exemplo: `/FLN001` (Florianópolis/SC) e `/GRM001` (Gramado/RS)
+- Código inexistente cai numa tela de erro amigável (ex: `/XXX999`)
+
+## Funcionalidades
+
+1. **Guia do imóvel** — fotos, capacidade, amenidades, acesso/WiFi (com copiar),
+   regras da estadia e contato do anfitrião. Responsivo, mobile-first.
+2. **Guia de experiências por IA** — boas-vindas, restaurantes, atrações, serviços
+   essenciais e dica sazonal, **reais e contextualizados pelo endereço**. Gerado
+   uma vez e **persistido** (não regenera); skeleton de carregamento na 1ª vez.
+3. **Assistente virtual** — chat com **respostas em streaming**, ciente de todos
+   os dados do imóvel e do guia. **Não inventa** informação fora dos dados.
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Prisma 7 + PostgreSQL ·
+Vercel AI SDK v6 + Claude (Anthropic) · Vitest.
+
+## Como rodar localmente
+
+Pré-requisitos: Node 20+ e um banco Postgres (recomendado: [Neon](https://neon.tech), free).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env        # preencha DATABASE_URL e ANTHROPIC_API_KEY
+npm run db:migrate          # cria as tabelas
+npm run db:seed             # popula os 2 imóveis de exemplo
+npm run dev                 # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse `http://localhost:3000/FLN001`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Variáveis de ambiente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variável            | Descrição                              |
+| ------------------- | -------------------------------------- |
+| `DATABASE_URL`      | String de conexão do Postgres          |
+| `ANTHROPIC_API_KEY` | Chave da API da Anthropic (Claude)     |
 
-## Learn More
+## Testes
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm test
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Cobrem a camada pura: formatação/labels e, principalmente, a **montagem do
+contexto do assistente** (garante que credenciais, regras, guia e a regra de
+_grounding_ anti-alucinação entram no system prompt).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Decisões técnicas
 
-## Deploy on Vercel
+- **Camada de dados em Postgres (Prisma 7).** Os imóveis e os guias de
+  experiências ficam no banco. Prisma 7 exige driver adapter — usamos
+  `@prisma/adapter-pg`. A mesma `DATABASE_URL` serve dev e produção.
+- **Guia de IA persistido.** `getOrCreateGuide` lê do banco se já existe; senão
+  gera com `generateObject` + schema **Zod** (saída estruturada e validada) e
+  salva. Atende à regra de "não regenerar a cada acesso".
+- **Feedback de carregamento via React Suspense.** O guia é um Server Component
+  assíncrono dentro de `<Suspense>`; o skeleton transmite enquanto a IA gera,
+  sem custo de client fetch.
+- **Chat com grounding.** O system prompt (em `lib/chat-context.ts`) injeta todos
+  os dados do imóvel + guia e instrui o modelo a responder **somente** com base
+  neles. Streaming via `streamText` + `toUIMessageStreamResponse`.
+- **Escolha de modelos.** Guia: `claude-sonnet-4-6` (precisão dos lugares reais,
+  chamada única por imóvel). Chat: `claude-haiku-4-5` (rápido e barato para
+  streaming). Centralizado em `lib/ai.ts`.
+- **Atomic Design.** Componentes em `atoms / molecules / organisms`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Estrutura
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+prisma/            schema, migrations e seed
+src/
+  app/             rotas (/[code], home, api/chat)
+  components/      atoms, molecules, organisms
+  lib/             db, ai, properties, guide, chat-context, labels, types
+  generated/       client Prisma (gerado)
+```
