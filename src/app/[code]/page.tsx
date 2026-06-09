@@ -10,6 +10,7 @@ import {
   ExperienceGuide,
   ExperienceGuideSkeleton,
 } from "@/components/organisms/ExperienceGuide";
+import { ChatWidget } from "@/components/organisms/ChatWidget";
 import { AmenityList } from "@/components/molecules/AmenityList";
 import { Section } from "@/components/atoms/Section";
 
@@ -55,7 +56,7 @@ export default async function PropertyGuidePage({
 
       <ContactCard host={property.host} address={property.address} />
 
-      {/* Feature 3 (Chat) entra aqui */}
+      <ChatWidget code={property.code} />
     </main>
   );
 }
