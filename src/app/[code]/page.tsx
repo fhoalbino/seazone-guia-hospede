@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAllPropertyCodes, getProperty } from "@/lib/properties";
@@ -5,6 +6,10 @@ import { PropertyHero } from "@/components/organisms/PropertyHero";
 import { AccessCard } from "@/components/organisms/AccessCard";
 import { RulesCard } from "@/components/organisms/RulesCard";
 import { ContactCard } from "@/components/organisms/ContactCard";
+import {
+  ExperienceGuide,
+  ExperienceGuideSkeleton,
+} from "@/components/organisms/ExperienceGuide";
 import { AmenityList } from "@/components/molecules/AmenityList";
 import { Section } from "@/components/atoms/Section";
 
@@ -43,9 +48,14 @@ export default async function PropertyGuidePage({
 
       <AccessCard operational={property.operational} />
       <RulesCard rules={property.rules} />
+
+      <Suspense fallback={<ExperienceGuideSkeleton />}>
+        <ExperienceGuide property={property} />
+      </Suspense>
+
       <ContactCard host={property.host} address={property.address} />
 
-      {/* Feature 2 (Guia de Experiências IA) e Feature 3 (Chat) entram aqui */}
+      {/* Feature 3 (Chat) entra aqui */}
     </main>
   );
 }
