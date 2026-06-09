@@ -18,9 +18,9 @@ npm run db:seed      # popula imóveis-exemplo (FLN001, GRM001)
 npm run db:generate  # regenera o client Prisma
 ```
 
-Variáveis: `DATABASE_URL` (Postgres/Neon) e `MINIMAX_API_KEY` (gera o guia de
-experiências E o chat em streaming). Template em `.env.example`. Nunca
-commitar `.env`.
+Variáveis: `DATABASE_URL` (Postgres/Neon), `MINIMAX_API_KEY` (guia + chat) e
+`GOOGLE_API_KEY` (Geocoding + Places, ancora o guia em lugares reais).
+Template em `.env.example`. Nunca commitar `.env`.
 
 ## Stack e pegadinhas de versão (já resolvidas — não regredir)
 
@@ -55,9 +55,12 @@ commitar `.env`.
 - **Segredos da estadia** (WiFi/fechadura/anfitrião) não são públicos na API →
   mock determinístico (`src/lib/operational-mock.ts`); em produção viriam do
   endpoint autenticado de reserva. Documentado no README.
-- **Guia de experiências** (`src/lib/guide.ts`): gerado com `generateObject` +
-  Zod e **persistido** no banco (requisito: não regenerar a cada acesso).
-  Renderizado em Server Component dentro de `<Suspense>` (skeleton enquanto gera).
+- **Guia de experiências** (`src/lib/guide.ts`): geocodifica o endereço e busca
+  lugares reais (`src/lib/places.ts`, Google Places New + haversine) + clima
+  (`src/lib/weather.ts`, Open-Meteo); a IA cura/descreve com `generateObject` +
+  Zod (com retry — M2 às vezes falha o structured output). Fallback sem ancoragem
+  se o Google falhar. **Persistido** no banco (não regenerar). Renderizado em
+  Server Component dentro de `<Suspense>` (skeleton enquanto gera).
 - **Chat** (`src/app/api/chat/route.ts` + `ChatWidget`): `streamText` com
   system prompt completo do imóvel + guia (`src/lib/chat-context.ts`).
   Provider = MiniMax (`MiniMax-M2` via Anthropic-compatible).

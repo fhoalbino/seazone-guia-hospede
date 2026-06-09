@@ -22,15 +22,17 @@ dúvidas sobre o imóvel em tempo real.
 1. **Guia do imóvel** — fotos, capacidade, amenidades, acesso/WiFi (com copiar),
    regras da estadia e contato do anfitrião. Responsivo, mobile-first.
 2. **Guia de experiências por IA** — boas-vindas, restaurantes, atrações, serviços
-   essenciais e dica sazonal, **reais e contextualizados pelo endereço**. Gerado
-   uma vez e **persistido** (não regenera); skeleton de carregamento na 1ª vez.
+   essenciais e dica sazonal. Os lugares e distâncias vêm do **Google Places
+   (real)** e o clima do **Open-Meteo**; a IA apenas cura e descreve. Gerado uma
+   vez e **persistido** (não regenera); skeleton de carregamento na 1ª vez.
 3. **Assistente virtual** — chat com **respostas em streaming**, ciente de todos
    os dados do imóvel e do guia. **Não inventa** informação fora dos dados.
 
 ## Stack
 
 Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Prisma 7 + PostgreSQL ·
-Vercel AI SDK v6 + MiniMax (M2) · Vitest.
+Vercel AI SDK v6 + MiniMax (M2) · Google Maps (Geocoding + Places) · Open-Meteo ·
+Vitest.
 
 ## Como rodar localmente
 
@@ -53,6 +55,7 @@ como `http://localhost:3000/AMC0204` (buscado na API da Seazone).
 | ------------------- | -------------------------------------- |
 | `DATABASE_URL`      | String de conexão do Postgres          |
 | `MINIMAX_API_KEY`   | Chave da API MiniMax (guia + chat)     |
+| `GOOGLE_API_KEY`    | Google Maps Platform (Geocoding + Places) |
 
 ## Testes
 
@@ -78,9 +81,12 @@ _grounding_ anti-alucinação entram no system prompt).
   demonstração esses campos são gerados de forma determinística por código
   (`lib/operational-mock.ts`); em produção viriam de `GET /reservations/details`
   após o check-in.
-- **Guia de IA persistido.** `getOrCreateGuide` lê do banco se já existe; senão
-  gera com `generateObject` + schema **Zod** (saída estruturada e validada) e
-  salva. Atende à regra de "não regenerar a cada acesso".
+- **Guia ancorado em dados reais.** `getOrCreateGuide` lê do banco se já existe;
+  senão geocodifica o endereço (Geocoding API), busca lugares reais próximos
+  (Places API New, distância por haversine) e o clima atual (Open-Meteo), e passa
+  tudo para a IA **curar e descrever** com `generateObject` + Zod. Se o Google
+  falhar, faz fallback para geração sem ancoragem (não quebra). Persiste o
+  resultado — atende à regra de "não regenerar a cada acesso".
 - **Feedback de carregamento via React Suspense.** O guia é um Server Component
   assíncrono dentro de `<Suspense>`; o skeleton transmite enquanto a IA gera,
   sem custo de client fetch.
@@ -94,12 +100,8 @@ _grounding_ anti-alucinação entram no system prompt).
 
 ## Melhorias futuras
 
-- **Ancorar o guia com Google Places API.** Hoje os lugares vêm do conhecimento
-  do LLM (ótimo para cidades conhecidas, mas pode ser impreciso em localidades
-  pequenas). O próximo passo é geocodificar o endereço e buscar restaurantes,
-  atrações e serviços reais via Google Places — usando o LLM apenas para
-  curadoria e redação dos textos. Isso garante distâncias e estabelecimentos
-  verificados (a API da Seazone já fornece latitude/longitude de cada imóvel).
+- Expor os lugares próximos como **tool de function-calling** no chat, para o
+  assistente consultar o Google Places sob demanda (resposta agêntica).
 - Integrar os dados sensíveis da estadia ao endpoint autenticado de reserva
   (`/reservations/details` com PIN), substituindo o mock de demonstração.
 - Cache/regeneração programada do guia (ex: atualizar a dica sazonal por mês).
@@ -111,6 +113,6 @@ prisma/            schema, migrations e seed
 src/
   app/             rotas (/[code], home, api/chat)
   components/      atoms, molecules, organisms
-  lib/             db, ai, properties, seazone-api, guide, chat-context, labels, types
+  lib/             db, ai, properties, seazone-api, places, weather, guide, chat-context, labels, types
   generated/       client Prisma (gerado)
 ```
