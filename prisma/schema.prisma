@@ -1,0 +1,82 @@
+// Guia Digital do Hóspede — Seazone
+// learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Imóvel gerenciado pela Seazone. Dados de referência da estadia.
+model Property {
+  id   Int    @id @default(autoincrement())
+  code String @unique // ex: FLN001 — usado na URL pública /FLN001
+
+  name             String
+  propertyType     String
+  bedroomQuantity  Int
+  bathroomQuantity Int
+  guestCapacity    Int
+
+  // Endereço
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  postalCode   String
+
+  // Operacional / acesso
+  wifiNetwork                String
+  wifiPassword               String
+  isSelfCheckin              Boolean
+  propertyAccessType         String // smart_lock, keybox, etc.
+  propertyAccessInstructions String
+  propertyPassword           String?
+  hasParkingSpot             Boolean @default(false)
+  parkingSpotIdentifier      String?
+  parkingSpotInstructions    String?
+
+  // Regras
+  checkInTime         String
+  checkOutTime        String
+  allowPet            Boolean
+  smokingPermitted    Boolean
+  suitableForChildren Boolean
+  suitableForBabies   Boolean
+  eventsPermitted     Boolean
+
+  // Amenidades variam por imóvel (wifi, piscina, churrasqueira...) → Json
+  amenities Json
+  images    String[]
+
+  // Anfitrião
+  hostName  String
+  hostPhone String
+
+  // Guia de experiências gerado por IA (1:1, persistido — não regenera)
+  guide ExperienceGuide?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Guia de experiências gerado por IA para um imóvel. Persistido para não regenerar a cada acesso.
+model ExperienceGuide {
+  id           Int      @id @default(autoincrement())
+  propertyCode String   @unique
+  property     Property @relation(fields: [propertyCode], references: [code], onDelete: Cascade)
+
+  welcomeMessage String
+  restaurants    Json // [{ name, distance, description }]
+  attractions    Json // [{ name, distance, description }]
+  essentials     Json // [{ name, type, distance, description }]
+  seasonalTip    String
+
+  model       String // qual modelo gerou (auditoria)
+  generatedAt DateTime @default(now())
+}
