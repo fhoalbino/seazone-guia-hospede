@@ -1,16 +1,12 @@
-import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getAllPropertyCodes, getProperty } from "@/lib/properties";
-import { PropertyHero } from "@/components/organisms/PropertyHero";
-import { AccessCard } from "@/components/organisms/AccessCard";
-import { RulesCard } from "@/components/organisms/RulesCard";
-import { ContactCard } from "@/components/organisms/ContactCard";
 import { ExperienceGuideClient } from "@/components/organisms/ExperienceGuideClient";
 import { ChatWidget } from "@/components/organisms/ChatWidget";
-import { AmenityList } from "@/components/molecules/AmenityList";
-import { Section } from "@/components/atoms/Section";
-import { Reveal } from "@/components/atoms/Reveal";
-import { Sparkles } from "lucide-react";
+import { HeroSection, HeroSkeleton } from "./_sections/HeroSection";
+import { AccessSection, AccessSkeleton } from "./_sections/AccessSection";
+import { RulesSection, RulesSkeleton } from "./_sections/RulesSection";
+import { ContactSection, ContactSkeleton } from "./_sections/ContactSection";
 
 export async function generateStaticParams() {
   const codes = await getAllPropertyCodes();
@@ -33,36 +29,29 @@ export default async function PropertyGuidePage({
   params,
 }: PageProps<"/[code]">) {
   const { code } = await params;
-  const property = await getProperty(code);
-
-  if (!property) notFound();
+  const propertyPromise = getProperty(code);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-6">
-      <Reveal>
-        <PropertyHero property={property} />
-      </Reveal>
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSection propertyPromise={propertyPromise} />
+      </Suspense>
 
-      <Reveal delay={0.05}>
-        <Section title="Amenidades" icon={<Sparkles className="h-5 w-5" />}>
-          <AmenityList amenities={property.amenities} />
-        </Section>
-      </Reveal>
+      <Suspense fallback={<AccessSkeleton />}>
+        <AccessSection propertyPromise={propertyPromise} />
+      </Suspense>
 
-      <Reveal delay={0.1}>
-        <AccessCard operational={property.operational} />
-      </Reveal>
-      <Reveal delay={0.15}>
-        <RulesCard rules={property.rules} />
-      </Reveal>
+      <Suspense fallback={<RulesSkeleton />}>
+        <RulesSection propertyPromise={propertyPromise} />
+      </Suspense>
 
-      <ExperienceGuideClient key={property.code} code={property.code} />
+      <ExperienceGuideClient key={code} code={code} />
 
-      <Reveal delay={0.2}>
-        <ContactCard host={property.host} address={property.address} />
-      </Reveal>
+      <Suspense fallback={<ContactSkeleton />}>
+        <ContactSection propertyPromise={propertyPromise} />
+      </Suspense>
 
-      <ChatWidget code={property.code} />
+      <ChatWidget code={code} />
     </main>
   );
 }
