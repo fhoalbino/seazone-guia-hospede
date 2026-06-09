@@ -3,7 +3,6 @@ import {
   Camera,
   Hand,
   Hospital,
-  Map,
   MapPinned,
   Pill,
   ShoppingCart,
@@ -12,8 +11,7 @@ import {
 } from "lucide-react";
 import { Section } from "@/components/atoms/Section";
 import { PlaceCard } from "@/components/molecules/PlaceCard";
-import { getOrCreateGuide } from "@/lib/guide";
-import type { Property } from "@/lib/types";
+import type { ExperienceGuide } from "@/lib/types";
 
 const ESSENTIAL_ICONS: Record<string, ReactNode> = {
   pharmacy: <Pill className="h-4 w-4" />,
@@ -21,26 +19,8 @@ const ESSENTIAL_ICONS: Record<string, ReactNode> = {
   hospital: <Hospital className="h-4 w-4" />,
 };
 
-/**
- * Guia de experiências gerado por IA. Server Component assíncrono:
- * gera/lê o guia e renderiza. Deve ser envolvido em <Suspense> para
- * exibir o skeleton enquanto a IA gera (primeiro acesso).
- */
-export async function ExperienceGuide({ property }: { property: Property }) {
-  let guide;
-  try {
-    guide = await getOrCreateGuide(property);
-  } catch {
-    return (
-      <Section title="Guia de Experiências" icon={<Map className="h-5 w-5" />}>
-        <p className="text-sm text-slate-500">
-          Não foi possível gerar o guia da região agora. Tente recarregar a
-          página em instantes.
-        </p>
-      </Section>
-    );
-  }
-
+/** Renderização (apresentacional) do guia de experiências. */
+export function GuideContent({ guide }: { guide: ExperienceGuide }) {
   return (
     <div className="flex flex-col gap-4">
       <Section title="Bem-vindo!" icon={<Hand className="h-5 w-5" />}>
@@ -79,7 +59,7 @@ export async function ExperienceGuide({ property }: { property: Property }) {
 }
 
 /** Skeleton exibido enquanto a IA gera o guia (feedback visual). */
-export function ExperienceGuideSkeleton() {
+export function GuideSkeleton() {
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
       <div className="flex items-center gap-3">

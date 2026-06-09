@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAllPropertyCodes, getProperty } from "@/lib/properties";
@@ -6,10 +5,7 @@ import { PropertyHero } from "@/components/organisms/PropertyHero";
 import { AccessCard } from "@/components/organisms/AccessCard";
 import { RulesCard } from "@/components/organisms/RulesCard";
 import { ContactCard } from "@/components/organisms/ContactCard";
-import {
-  ExperienceGuide,
-  ExperienceGuideSkeleton,
-} from "@/components/organisms/ExperienceGuide";
+import { ExperienceGuideClient } from "@/components/organisms/ExperienceGuideClient";
 import { ChatWidget } from "@/components/organisms/ChatWidget";
 import { AmenityList } from "@/components/molecules/AmenityList";
 import { Section } from "@/components/atoms/Section";
@@ -60,9 +56,7 @@ export default async function PropertyGuidePage({
         <RulesCard rules={property.rules} />
       </Reveal>
 
-      <Suspense fallback={<ExperienceGuideSkeleton />}>
-        <ExperienceGuide property={property} />
-      </Suspense>
+      <ExperienceGuideClient key={property.code} code={property.code} />
 
       <Reveal delay={0.2}>
         <ContactCard host={property.host} address={property.address} />
