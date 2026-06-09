@@ -18,8 +18,9 @@ npm run db:seed      # popula imóveis-exemplo (FLN001, GRM001)
 npm run db:generate  # regenera o client Prisma
 ```
 
-Variáveis: `DATABASE_URL` (Postgres/Neon) e `ANTHROPIC_API_KEY` no `.env`
-(template em `.env.example`). Nunca commitar `.env`.
+Variáveis: `DATABASE_URL` (Postgres/Neon) e `MINIMAX_API_KEY` (gera o guia de
+experiências E o chat em streaming). Template em `.env.example`. Nunca
+commitar `.env`.
 
 ## Stack e pegadinhas de versão (já resolvidas — não regredir)
 
@@ -31,10 +32,18 @@ Variáveis: `DATABASE_URL` (Postgres/Neon) e `ANTHROPIC_API_KEY` no `.env`
   `prisma.config.ts` e o `PrismaClient` exige **driver adapter**
   (`@prisma/adapter-pg`, ver `src/lib/db.ts`). Tipo da row = `PropertyModel`.
   Use `sslmode=verify-full` na connection string (evita warning do `pg`).
-- **Vercel AI SDK v6:** o provider `@ai-sdk/anthropic` por padrão chama
-  `/messages` sem `/v1` → 404. Use `createAnthropic({ baseURL: ".../v1" })`
-  (ver `src/lib/ai.ts`). `convertToModelMessages` é **async** (await).
-  `useChat` vem de `@ai-sdk/react`; o stream usa `toUIMessageStreamResponse`.
+- **Vercel AI SDK v6 — provider único (MiniMax via Anthropic-compatible):**
+  - Guia e chat usam `MiniMax-M2`. A subscription MiniMax (Coding Plan) só
+    funciona pelo endpoint **Anthropic-compatible**, então usamos o provider
+    `@ai-sdk/anthropic` (`createAnthropic`) com `baseURL`
+    `https://api.minimax.io/anthropic/v1` + `MINIMAX_API_KEY` (ver `src/lib/ai.ts`).
+  - **Não usar** o endpoint OpenAI-compatible (`/v1/chat/completions`): é
+    pay-per-token e retorna **402 Payment Required** sem saldo — a subscription
+    não passa por lá.
+  - **Guia** usa `generateObject` + Zod (M2 suporta tool use, structured output
+    validado). **Chat** usa `streamText`.
+  - `convertToModelMessages` é **async** (await). `useChat` vem de
+    `@ai-sdk/react`; o stream usa `toUIMessageStreamResponse`.
 - **Tailwind v4**, **lucide-react** (ícones), **Vaul** (drawer do chat),
   **motion** (micro-interações), **react-markdown** (respostas do chat).
 
@@ -51,6 +60,7 @@ Variáveis: `DATABASE_URL` (Postgres/Neon) e `ANTHROPIC_API_KEY` no `.env`
   Renderizado em Server Component dentro de `<Suspense>` (skeleton enquanto gera).
 - **Chat** (`src/app/api/chat/route.ts` + `ChatWidget`): `streamText` com
   system prompt completo do imóvel + guia (`src/lib/chat-context.ts`).
+  Provider = MiniMax (`MiniMax-M2` via Anthropic-compatible).
   **Grounding:** responde só com base nos dados, não inventa.
 - **Componentes em Atomic Design:** `components/atoms | molecules | organisms`.
 

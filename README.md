@@ -30,7 +30,7 @@ dúvidas sobre o imóvel em tempo real.
 ## Stack
 
 Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Prisma 7 + PostgreSQL ·
-Vercel AI SDK v6 + Claude (Anthropic) · Vitest.
+Vercel AI SDK v6 + MiniMax (M2) · Vitest.
 
 ## Como rodar localmente
 
@@ -38,7 +38,7 @@ Pré-requisitos: Node 20+ e um banco Postgres (recomendado: [Neon](https://neon.
 
 ```bash
 npm install
-cp .env.example .env        # preencha DATABASE_URL e ANTHROPIC_API_KEY
+cp .env.example .env        # preencha DATABASE_URL e MINIMAX_API_KEY
 npm run db:migrate          # cria as tabelas
 npm run db:seed             # popula os 2 imóveis de exemplo
 npm run dev                 # http://localhost:3000
@@ -52,7 +52,7 @@ como `http://localhost:3000/AMC0204` (buscado na API da Seazone).
 | Variável            | Descrição                              |
 | ------------------- | -------------------------------------- |
 | `DATABASE_URL`      | String de conexão do Postgres          |
-| `ANTHROPIC_API_KEY` | Chave da API da Anthropic (Claude)     |
+| `MINIMAX_API_KEY`   | Chave da API MiniMax (guia + chat)     |
 
 ## Testes
 
@@ -87,9 +87,9 @@ _grounding_ anti-alucinação entram no system prompt).
 - **Chat com grounding.** O system prompt (em `lib/chat-context.ts`) injeta todos
   os dados do imóvel + guia e instrui o modelo a responder **somente** com base
   neles. Streaming via `streamText` + `toUIMessageStreamResponse`.
-- **Escolha de modelos.** Guia: `claude-sonnet-4-6` (precisão dos lugares reais,
-  chamada única por imóvel). Chat: `claude-haiku-4-5` (rápido e barato para
-  streaming). Centralizado em `lib/ai.ts`.
+- **Escolha de modelos.** Guia e chat usam `MiniMax-M2` (subscription via
+  endpoint Anthropic-compatible). O guia faz uma chamada única por imóvel
+  (`generateObject` + Zod); o chat roda em streaming. Centralizado em `lib/ai.ts`.
 - **Atomic Design.** Componentes em `atoms / molecules / organisms`.
 
 ## Melhorias futuras
