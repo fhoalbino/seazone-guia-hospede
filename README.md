@@ -9,7 +9,7 @@ dúvidas sobre o imóvel em tempo real.
 
 ## Demo
 
-- **App:** _<adicionar URL da Vercel após o deploy>_
+- **App:** https://seazone-guia-hospede.vercel.app
 - Imóveis de exemplo (dados do desafio): `/FLN001` (Florianópolis/SC) e
   `/GRM001` (Gramado/RS)
 - Imóveis **reais** (via API pública da Seazone): `/AMC0204` (Florianópolis),
