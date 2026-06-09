@@ -41,7 +41,9 @@ function haversineKm(a: LatLng, b: LatLng): number {
 }
 
 function formatDistance(km: number): string {
-  if (km < 1) return `Aprox. ${Math.round(km * 1000)} m`;
+  const meters = Math.round(km * 1000);
+  if (meters < 60) return "a poucos passos";
+  if (km < 1) return `Aprox. ${meters} m`;
   return `Aprox. ${km.toFixed(1).replace(".", ",")} km`;
 }
 

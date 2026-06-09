@@ -88,7 +88,7 @@ function buildGroundedPrompt(
     `- Para cada um, escreva uma descrição curta (1 frase). Mantenha o nome e a distância exatos da lista.`,
     `- Escreva uma mensagem de boas-vindas calorosa citando o bairro/cidade.`,
     `- ${weatherLine(weather)} Faça a dica sazonal coerente com esse clima e a época.`,
-    `- Tudo em português do Brasil, tom acolhedor.`,
+    `- IMPORTANTE: escreva TUDO em português do Brasil. Nunca use caracteres chineses, ingleses ou de outros idiomas.`,
   ].join("\n");
 }
 
@@ -100,7 +100,8 @@ function buildFallbackPrompt(property: Property): string {
     propertyHeader(property),
     ``,
     `Gere conteúdo REAL e contextualizado para este endereço (restaurantes, atrações e serviços que existem próximos), com distâncias coerentes.`,
-    `Dica sazonal: estamos em ${currentMonthPt()}. Tudo em português do Brasil, tom acolhedor.`,
+    `Dica sazonal: estamos em ${currentMonthPt()}.`,
+    `IMPORTANTE: escreva TUDO em português do Brasil. Nunca use caracteres chineses, ingleses ou de outros idiomas.`,
   ].join("\n");
 }
 
@@ -108,8 +109,9 @@ function buildFallbackPrompt(property: Property): string {
 async function buildPrompt(property: Property): Promise<string> {
   try {
     const { address: a } = property;
+    // Coordenadas exatas da fonte (Seazone) são mais precisas que geocodar o texto.
     const full = `${a.street}, ${a.number}, ${a.neighborhood}, ${a.city}, ${a.state}, Brasil`;
-    const origin = await geocodeAddress(full);
+    const origin = property.coords ?? (await geocodeAddress(full));
     if (!origin) return buildFallbackPrompt(property);
 
     const [nearby, weather] = await Promise.all([

@@ -55,6 +55,8 @@ export interface Property {
   amenities: Amenities;
   images: string[];
   host: PropertyHost;
+  /** Coordenadas exatas do imóvel (quando a fonte fornece). Usadas para ancorar o guia. */
+  coords?: { lat: number; lng: number } | null;
 }
 
 // --- Guia de experiências gerado por IA ---

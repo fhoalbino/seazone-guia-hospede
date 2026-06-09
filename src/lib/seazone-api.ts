@@ -37,6 +37,7 @@ interface SeazoneDetails {
     check_in_time: string;
     check_out_time: string;
   };
+  location_info?: { latitude: string | number; longitude: string | number };
   images?: { images?: { url: string }[] };
 }
 
@@ -81,6 +82,11 @@ export async function fetchSeazoneProperty(
   const a = details.address;
   const amenities = await fetchAmenities(details.id);
 
+  const loc = details.location_info;
+  const coords = loc
+    ? { lat: Number(loc.latitude), lng: Number(loc.longitude) }
+    : null;
+
   return {
     code: details.code,
     name: details.listing_title,
@@ -108,6 +114,7 @@ export async function fetchSeazoneProperty(
     },
     amenities,
     images: (details.images?.images ?? []).map((img) => img.url).slice(0, 1),
+    coords,
     operational: mockOperational(details.code),
     host: mockHost(details.code),
   };
