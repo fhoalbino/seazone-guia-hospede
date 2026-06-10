@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Drawer } from "vaul";
@@ -32,6 +32,16 @@ export function ChatWidget({ code }: { code: string }) {
     });
 
   const busy = status === "submitted" || status === "streaming";
+
+  // Rola para o fim quando chega mensagem nova ou durante o streaming — mas só se
+  // o usuário já está perto da base (não interrompe quem rolou pra ler o histórico).
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 160;
+    if (nearBottom) el.scrollTop = el.scrollHeight;
+  }, [messages, status]);
 
   function send(text: string) {
     const trimmed = text.trim();
@@ -93,7 +103,10 @@ export function ChatWidget({ code }: { code: string }) {
               </div>
             </div>
 
-            <div className="flex-1 space-y-3 overflow-y-auto border-t border-slate-100 p-4">
+            <div
+              ref={scrollRef}
+              className="flex-1 space-y-3 overflow-y-auto border-t border-slate-100 p-4"
+            >
               {messages.length === 0 && (
                 <div className="space-y-3">
                   <p className="text-sm text-slate-500">

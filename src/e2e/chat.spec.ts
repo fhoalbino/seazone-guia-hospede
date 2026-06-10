@@ -50,4 +50,33 @@ test.describe("Assistente virtual (chat)", () => {
     const chat = page.getByRole("dialog");
     await expect(chat.getByText(/15h|15:00/i)).toBeVisible({ timeout: 30_000 });
   });
+
+  test("rola automaticamente para a última mensagem", async ({ page }) => {
+    await page.goto("/FLN001");
+    await page.getByRole("button", { name: /abrir assistente virtual/i }).click();
+    const input = page.getByPlaceholder("Digite sua pergunta…");
+    const enviar = page.getByRole("button", { name: "Enviar" });
+
+    // Várias perguntas para o histórico transbordar a área de rolagem.
+    for (const q of [
+      "Qual a senha do WiFi?",
+      "A que horas é o check-in?",
+      "Posso levar meu cachorro?",
+      "Tem estacionamento?",
+    ]) {
+      await input.fill(q);
+      await enviar.click();
+      await page.waitForTimeout(2500);
+    }
+
+    // O container de mensagens deve estar rolado até o fim (pinado na base).
+    const scroller = page
+      .getByRole("dialog")
+      .locator("div.overflow-y-auto")
+      .first();
+    const atBottom = await scroller.evaluate(
+      (el) => el.scrollHeight - el.scrollTop - el.clientHeight < 24
+    );
+    expect(atBottom).toBe(true);
+  });
 });
