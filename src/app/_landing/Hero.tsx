@@ -15,9 +15,9 @@ const item: Variants = {
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#0B1E3D] text-white">
-      {/* Background subtle radial glow */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(14,165,233,0.18),transparent)]" />
+    <section className="relative overflow-hidden bg-[#2a211b] text-white">
+      {/* Brilho radial quente */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(194,107,74,0.28),transparent)]" />
 
       <div className="relative mx-auto max-w-5xl px-6 pb-36 pt-20 text-center sm:pb-44 sm:pt-28">
         <motion.div
@@ -27,7 +27,7 @@ export function Hero() {
           className="flex flex-col items-center gap-7"
         >
           <motion.div variants={item}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-1.5 text-sm font-medium text-sky-300">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#e8a87c]/30 bg-[#e8a87c]/10 px-4 py-1.5 text-sm font-medium text-[#e8a87c]">
               <Sparkles className="h-3.5 w-3.5" />
               Guia gerado por IA · Assistente em tempo real
             </span>
@@ -35,15 +35,15 @@ export function Hero() {
 
           <motion.h1
             variants={item}
-            className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl"
+            className="max-w-3xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-6xl"
           >
             Tudo sobre sua estadia,{" "}
-            <span className="text-sky-400">na palma da mão</span>
+            <span className="text-[#e8a87c]">na palma da mão</span>
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="max-w-xl text-lg leading-relaxed text-slate-300"
+            className="max-w-xl text-lg leading-relaxed text-[#d8ccbd]"
           >
             Guia digital personalizado por imóvel: acesso, WiFi, regras,
             experiências locais e assistente virtual — tudo em um link.
@@ -52,7 +52,7 @@ export function Hero() {
           <motion.div variants={item} className="flex flex-wrap justify-center gap-3">
             <Link
               href="/FLN001"
-              className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-6 py-3 font-semibold text-white shadow-lg shadow-sky-500/25 transition hover:bg-sky-400 hover:shadow-sky-400/30"
+              className="inline-flex items-center gap-2 rounded-full bg-clay px-6 py-3 font-semibold text-white shadow-lg shadow-clay/25 transition hover:bg-clay-dark"
             >
               Ver guia de exemplo
               <ArrowRight className="h-4 w-4" />
@@ -68,10 +68,10 @@ export function Hero() {
           {/* Stats row */}
           <motion.div
             variants={item}
-            className="mt-4 flex flex-wrap justify-center gap-8 text-sm text-slate-400"
+            className="mt-4 flex flex-wrap justify-center gap-8 text-sm text-[#b3a596]"
           >
             {[
-              { n: "20+", label: "imóveis disponíveis" },
+              { n: "12+", label: "imóveis disponíveis" },
               { n: "IA", label: "guia contextualizado" },
               { n: "24h", label: "assistente virtual" },
             ].map(({ n, label }) => (
@@ -94,7 +94,7 @@ export function Hero() {
         >
           <path
             d="M0,48 C240,96 480,0 720,48 C960,96 1200,16 1440,48 L1440,96 L0,96 Z"
-            fill="#f1f5f9"
+            fill="#f5efe6"
           />
         </svg>
       </div>
