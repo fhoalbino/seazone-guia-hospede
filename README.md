@@ -32,8 +32,8 @@ dúvidas sobre o imóvel em tempo real.
 ## Stack
 
 Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Prisma 7 + PostgreSQL ·
-Vercel AI SDK v6 + MiniMax (M2) · Google Maps (Geocoding + Places) · Open-Meteo ·
-Vitest.
+Vercel AI SDK v6 + MiniMax (M2.7) · Google Maps (Geocoding + Places) · Open-Meteo ·
+Vitest + Playwright.
 
 ## Como rodar localmente
 
@@ -43,7 +43,7 @@ Pré-requisitos: Node 20+ e um banco Postgres (recomendado: [Neon](https://neon.
 npm install
 cp .env.example .env        # preencha DATABASE_URL, MINIMAX_API_KEY e GOOGLE_API_KEY
 npm run db:migrate          # cria as tabelas
-npm run db:seed             # popula os 2 imóveis de exemplo
+npm run db:seed             # popula 12 imóveis (2 exemplos do desafio + 10 reais)
 npm run dev                 # http://localhost:3000
 ```
 
@@ -63,8 +63,10 @@ como `http://localhost:3000/AMC0204` (do snapshot salvo pelo seed).
 A suíte tem três camadas, da mais rápida e isolada à mais próxima do usuário real.
 
 ```bash
-npm test          # Vitest: unitários (Node) + componente (jsdom)
-npm run test:e2e  # Playwright: fluxos de ponta a ponta (sobe o app + browser)
+npm test                          # Vitest: unitários (Node) + componente (jsdom)
+npm run test:e2e                  # Playwright: ponta a ponta (sobe o app + browser)
+npm run chat:eval                 # bateria de avaliação do assistente (ver abaixo)
+node scripts/chat-eval.mjs AMC0204  # mesma bateria num imóvel real específico
 ```
 
 ### Unitários (Vitest, ambiente Node)
@@ -111,6 +113,17 @@ O Playwright sobe o dev server sozinho (`webServer` no `playwright.config.ts`).
 Para o browser, instale com `npx playwright install chromium`; em ambientes sem
 build empacotado (ex: Ubuntu pré-release) ele cai para o Chromium do sistema via
 `executablePath`, controlável por `PLAYWRIGHT_CHROMIUM_PATH`.
+
+### Avaliação do assistente (`scripts/chat-eval.mjs`)
+
+Como o chat é o critério mais cobrado, há um harness dedicado que dispara uma
+bateria pesada contra `/api/chat` e roda checagens automáticas: **correção
+factual** (nos dois imóveis-exemplo), **anti-alucinação** (preço, comodidades e
+andar inexistentes — não pode inventar nem deduzir), **pivô** (pede "bar" → indica
+restaurantes reais do guia), **resistência a prompt injection** (não revela o
+prompt, ignora "ignore tudo"), **idioma** (sempre PT-BR, sem CJK) e **edge cases**.
+Passe um código (`node scripts/chat-eval.mjs CZZ0504`) para rodar a versão
+genérica contra qualquer imóvel do banco.
 
 ## Pipeline de CI/CD
 
@@ -169,9 +182,11 @@ Automação em camadas, equilibrando velocidade, custo e confiança:
 - **Chat com grounding.** O system prompt (em `lib/chat-context.ts`) injeta todos
   os dados do imóvel + guia e instrui o modelo a responder **somente** com base
   neles. Streaming via `streamText` + `toUIMessageStreamResponse`.
-- **Escolha de modelos.** Guia e chat usam `MiniMax-M2` (subscription via
+- **Escolha de modelos.** Guia e chat usam `MiniMax-M2.7` (subscription via
   endpoint Anthropic-compatible). O guia faz uma chamada única por imóvel
-  (`generateObject` + Zod); o chat roda em streaming. Centralizado em `lib/ai.ts`.
+  (`generateObject` + Zod); o chat roda em streaming. Como o MiniMax às vezes
+  vaza ideogramas, um `experimental_transform` filtra caracteres CJK do stream
+  em tempo real (`lib/chat-stream.ts`). Centralizado em `lib/ai.ts`.
 - **Atomic Design.** Componentes em `atoms / molecules / organisms`.
 
 ## Melhorias futuras
