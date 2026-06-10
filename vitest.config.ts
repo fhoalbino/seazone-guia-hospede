@@ -1,14 +1,29 @@
 import { defineConfig } from "vitest/config";
 import path from "node:path";
 
+const alias = { "@": path.resolve(import.meta.dirname, "./src") };
+
 export default defineConfig({
-  resolve: {
-    alias: { "@": path.resolve(import.meta.dirname, "./src") },
-  },
   test: {
-    environment: "node",
-    include: ["src/**/*.test.{ts,tsx}"],
-    environmentMatchGlobs: [["src/components/**/*.test.tsx", "jsdom"]],
-    setupFiles: ["src/test/setup.ts"],
+    projects: [
+      {
+        resolve: { alias },
+        test: {
+          name: "unit",
+          environment: "node",
+          include: ["src/**/*.test.ts"],
+          setupFiles: ["src/test/setup.ts"],
+        },
+      },
+      {
+        resolve: { alias },
+        test: {
+          name: "components",
+          environment: "jsdom",
+          include: ["src/components/**/*.test.tsx"],
+          setupFiles: ["src/test/setup.ts"],
+        },
+      },
+    ],
   },
 });
