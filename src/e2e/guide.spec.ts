@@ -11,11 +11,12 @@ test.describe("Guia de experiências", () => {
   });
 
   test("conteúdo do guia aparece após o carregamento", async ({ page }) => {
+    // Primeira geração (geocode + Places + IA) pode ser lenta numa base fria.
+    test.setTimeout(120_000);
     await page.goto("/FLN001");
-    // Primeira geração pode levar até 45s; depois é persistido e rápido.
     await expect(
       page.getByRole("heading", { name: /Onde comer/i })
-    ).toBeVisible({ timeout: 45_000 });
+    ).toBeVisible({ timeout: 90_000 });
     await expect(
       page.getByRole("heading", { name: /O que fazer/i })
     ).toBeVisible({ timeout: 5_000 });
@@ -25,18 +26,20 @@ test.describe("Guia de experiências", () => {
   });
 
   test("guia de FLN001 é contextualizado por Florianópolis", async ({ page }) => {
+    test.setTimeout(120_000);
     await page.goto("/FLN001");
     await expect(
       page.getByRole("heading", { name: /Onde comer/i })
-    ).toBeVisible({ timeout: 45_000 });
+    ).toBeVisible({ timeout: 90_000 });
     await expect(page.getByText(/Florian[óo]polis/i).first()).toBeVisible();
   });
 
   test("guia de GRM001 é contextualizado por Gramado", async ({ page }) => {
+    test.setTimeout(120_000);
     await page.goto("/GRM001");
     await expect(
       page.getByRole("heading", { name: /Onde comer/i })
-    ).toBeVisible({ timeout: 45_000 });
+    ).toBeVisible({ timeout: 90_000 });
     await expect(page.getByText(/Gramado/i).first()).toBeVisible();
   });
 });
