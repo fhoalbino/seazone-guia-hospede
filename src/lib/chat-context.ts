@@ -12,7 +12,7 @@ function simNao(v: boolean): string {
  */
 export function buildChatSystemPrompt(
   property: Property,
-  guide: ExperienceGuide,
+  guide: ExperienceGuide | null,
 ): string {
   const { address: a, operational: o, rules: r } = property;
   const amenities = Object.entries(property.amenities)
@@ -56,7 +56,9 @@ CONTATO DO ANFITRIÃO:
 - Nome: ${property.host.name}
 - Telefone: ${formatPhone(property.host.phone)}
 
-=== GUIA DA REGIÃO ===
+${
+    guide
+      ? `=== GUIA DA REGIÃO ===
 Boas-vindas: ${guide.welcomeMessage}
 
 Restaurantes próximos:
@@ -68,5 +70,10 @@ ${guide.attractions.map((x) => `- ${x.name} (${x.distance}): ${x.description}`).
 Serviços essenciais:
 ${guide.essentials.map((x) => `- ${x.name} (${x.distance}): ${x.description}`).join("\n")}
 
-Dica da estação: ${guide.seasonalTip}`;
+Dica da estação: ${guide.seasonalTip}`
+      : `=== GUIA DA REGIÃO ===
+O guia de experiências locais ainda está sendo gerado. Para perguntas sobre restaurantes,
+atrações e serviços próximos, peça ao hóspede para aguardar alguns instantes e tentar novamente.
+Enquanto isso, responda normalmente sobre acesso, WiFi, regras e contato do anfitrião.`
+  }`;
 }
