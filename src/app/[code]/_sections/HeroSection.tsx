@@ -1,4 +1,3 @@
-import { use } from "react";
 import { notFound } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { PropertyHero } from "@/components/organisms/PropertyHero";
@@ -7,12 +6,12 @@ import { Section } from "@/components/atoms/Section";
 import { Reveal } from "@/components/atoms/Reveal";
 import type { Property } from "@/lib/types";
 
-export function HeroSection({
+export async function HeroSection({
   propertyPromise,
 }: {
   propertyPromise: Promise<Property | null>;
 }) {
-  const property = use(propertyPromise);
+  const property = await propertyPromise;
   if (!property) notFound();
   return (
     <>

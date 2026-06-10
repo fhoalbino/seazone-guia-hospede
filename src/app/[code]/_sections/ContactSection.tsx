@@ -1,14 +1,13 @@
-import { use } from "react";
 import { ContactCard } from "@/components/organisms/ContactCard";
 import { Reveal } from "@/components/atoms/Reveal";
 import type { Property } from "@/lib/types";
 
-export function ContactSection({
+export async function ContactSection({
   propertyPromise,
 }: {
   propertyPromise: Promise<Property | null>;
 }) {
-  const property = use(propertyPromise);
+  const property = await propertyPromise;
   if (!property) return null;
   return (
     <Reveal delay={0.2}>

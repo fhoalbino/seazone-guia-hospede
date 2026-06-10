@@ -1,14 +1,13 @@
-import { use } from "react";
 import { AccessCard } from "@/components/organisms/AccessCard";
 import { Reveal } from "@/components/atoms/Reveal";
 import type { Property } from "@/lib/types";
 
-export function AccessSection({
+export async function AccessSection({
   propertyPromise,
 }: {
   propertyPromise: Promise<Property | null>;
 }) {
-  const property = use(propertyPromise);
+  const property = await propertyPromise;
   if (!property) return null;
   return (
     <Reveal delay={0.1}>
