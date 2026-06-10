@@ -15,114 +15,119 @@ export default function OGImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
           fontFamily: "system-ui, sans-serif",
+          padding: "64px 80px",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* Glow radial background */}
+        {/* Glow top-right */}
         <div
           style={{
             position: "absolute",
-            top: -200,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 900,
-            height: 600,
-            background:
-              "radial-gradient(ellipse, rgba(14,165,233,0.22) 0%, transparent 70%)",
+            top: -180,
+            right: -100,
+            width: 700,
+            height: 700,
+            background: "radial-gradient(ellipse, rgba(14,165,233,0.28) 0%, transparent 65%)",
+            borderRadius: "50%",
+          }}
+        />
+        {/* Subtle glow bottom-left */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: -200,
+            left: -100,
+            width: 500,
+            height: 500,
+            background: "radial-gradient(ellipse, rgba(56,189,248,0.12) 0%, transparent 65%)",
             borderRadius: "50%",
           }}
         />
 
-        {/* Badge */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            background: "rgba(14,165,233,0.15)",
-            border: "1px solid rgba(14,165,233,0.35)",
-            borderRadius: 100,
-            padding: "8px 20px",
-            marginBottom: 32,
-          }}
-        >
+        {/* Top: logo area */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16, zIndex: 1 }}>
           <div
             style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "#38bdf8",
+              background: "rgba(14,165,233,0.15)",
+              border: "1px solid rgba(14,165,233,0.4)",
+              borderRadius: 100,
+              padding: "10px 24px",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
             }}
-          />
-          <span style={{ color: "#7dd3fc", fontSize: 18, fontWeight: 500 }}>
-            Powered by AI · Seazone
-          </span>
+          >
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#38bdf8" }} />
+            <span style={{ color: "#7dd3fc", fontSize: 22, fontWeight: 600, letterSpacing: 0.5 }}>
+              seazone · guia do hóspede
+            </span>
+          </div>
         </div>
 
-        {/* Title */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 16,
-          }}
-        >
-          <span
+        {/* Center: main copy */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20, zIndex: 1 }}>
+          <div
             style={{
               color: "#ffffff",
-              fontSize: 64,
-              fontWeight: 800,
-              lineHeight: 1.1,
-              textAlign: "center",
-              letterSpacing: -1,
+              fontSize: 88,
+              fontWeight: 900,
+              lineHeight: 1.0,
+              letterSpacing: -3,
             }}
           >
             Guia Digital
-          </span>
-          <span
+          </div>
+          <div
             style={{
               color: "#38bdf8",
-              fontSize: 64,
-              fontWeight: 800,
-              lineHeight: 1.1,
-              textAlign: "center",
-              letterSpacing: -1,
+              fontSize: 88,
+              fontWeight: 900,
+              lineHeight: 1.0,
+              letterSpacing: -3,
             }}
           >
             do Hóspede
-          </span>
+          </div>
+          <div
+            style={{
+              color: "#94a3b8",
+              fontSize: 30,
+              fontWeight: 400,
+              marginTop: 8,
+              maxWidth: 640,
+              lineHeight: 1.4,
+            }}
+          >
+            Acesso, WiFi, regras e experiências locais geradas por IA — tudo em um link.
+          </div>
         </div>
 
-        {/* Subtitle */}
+        {/* Bottom: stats strip */}
         <div
           style={{
-            color: "#94a3b8",
-            fontSize: 24,
-            marginTop: 28,
-            textAlign: "center",
-            maxWidth: 700,
+            display: "flex",
+            gap: 48,
+            zIndex: 1,
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+            paddingTop: 28,
+            width: "100%",
           }}
         >
-          Acesso, WiFi, regras e experiências locais — tudo em um link
+          {[
+            { n: "20+", label: "imóveis" },
+            { n: "IA", label: "guia contextualizado" },
+            { n: "24h", label: "assistente virtual" },
+          ].map(({ n, label }) => (
+            <div key={label} style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+              <span style={{ color: "#38bdf8", fontSize: 32, fontWeight: 800 }}>{n}</span>
+              <span style={{ color: "#64748b", fontSize: 20 }}>{label}</span>
+            </div>
+          ))}
         </div>
-
-        {/* Wave bottom */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 80,
-            background:
-              "linear-gradient(to bottom, transparent, rgba(14,165,233,0.08))",
-          }}
-        />
       </div>
     ),
     { ...size },
