@@ -1,0 +1,212 @@
+[
+  {
+    "code": "AMC0204",
+    "title": "Belo apto aconchegante a 4min do mar AMC0204",
+    "street": "Rua das Gaivotas",
+    "number": "86",
+    "neighborhood": "Ingleses Norte",
+    "city": "Florianópolis",
+    "state": "SC",
+    "postalCode": "88058-500",
+    "lat": -27.435707108711075,
+    "lng": -48.3931659227539,
+    "guests": 4,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/68b1c8060d0643324d236ae7",
+      "https://seazone.com.br/image/68b1c806cb6869aea55b94cb",
+      "https://seazone.com.br/image/68b1c806cfe44c71d7ce586d",
+      "https://seazone.com.br/image/68b1c807249fd98ef42ef59e"
+    ]
+  },
+  {
+    "code": "CDK0011",
+    "title": "Apto 1 Quarto a 220 m da Praia CDK0011",
+    "street": "Rua Oásis do Mutá",
+    "number": "SN",
+    "neighborhood": "Chácara do Mutá",
+    "city": "Porto Seguro",
+    "state": "BA",
+    "postalCode": "45810-000",
+    "lat": -16.345370043349728,
+    "lng": -39.01084581698837,
+    "guests": 3,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/692759280e068ab359340f0f",
+      "https://seazone.com.br/image/69275929e449753086d65345",
+      "https://seazone.com.br/image/69275928a7853c85da64312b",
+      "https://seazone.com.br/image/69275928aa8aa658570c470f"
+    ]
+  },
+  {
+    "code": "MHFB0705",
+    "title": "Studio vista mar c/ Piscina 280m Praia MHFB0705",
+    "street": "Rua 123-B",
+    "number": "91",
+    "neighborhood": "Centro",
+    "city": "Itapema",
+    "state": "SC",
+    "postalCode": "88220-000",
+    "lat": -27.093057706240508,
+    "lng": -48.61326438283807,
+    "guests": 2,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/6863f5f9940f0e4a115583e7",
+      "https://seazone.com.br/image/6863f5f5d5515b68a34a825a",
+      "https://seazone.com.br/image/6863f5da1a6fc4f988572cb9",
+      "https://seazone.com.br/image/6863f5f9c8fb035e14f4ab6c"
+    ]
+  },
+  {
+    "code": "SPJ0101",
+    "title": "Novo Studio em Jurerê - Refúgio de Luxo SPJ0101",
+    "street": "Alameda César Nascimento",
+    "number": "549",
+    "neighborhood": "Jurerê",
+    "city": "Florianópolis",
+    "state": "SC",
+    "postalCode": "88053-500",
+    "lat": -27.4397148,
+    "lng": -48.4891211,
+    "guests": 3,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/669aae39cd77f149472cd9da",
+      "https://seazone.com.br/image/669aaea6fef5b1a004ea84ba",
+      "https://seazone.com.br/image/669aaea6fef5b1a004ea84b9",
+      "https://seazone.com.br/image/669aae35f40679f56b078847"
+    ]
+  },
+  {
+    "code": "TCO0712",
+    "title": "Studio no Centro Hist. prox. Santa Casa TCO0712",
+    "street": "Rua Senhor dos Passos",
+    "number": "154",
+    "neighborhood": "Centro Histórico",
+    "city": "Porto Alegre",
+    "state": "RS",
+    "postalCode": "90020-180",
+    "lat": -30.0284145,
+    "lng": -51.223253,
+    "guests": 2,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/6842e3142ffcf2b5edd811b4",
+      "https://seazone.com.br/image/6842e3142ffcf2b5edd811b0",
+      "https://seazone.com.br/image/6842e315250f45c15bddbf09",
+      "https://seazone.com.br/image/6842e3152ffcf2b5edd811c1"
+    ]
+  },
+  {
+    "code": "CZZ0504",
+    "title": "Belo Estúdio Funcional em Urubici CZZ0504",
+    "street": "Av. Adolfo Konder",
+    "number": "600",
+    "neighborhood": "Traçado",
+    "city": "Urubici",
+    "state": "SC",
+    "postalCode": "88650-000",
+    "lat": -28.0100344,
+    "lng": -49.590397,
+    "guests": 3,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/67e428a88384655fd3433f74",
+      "https://seazone.com.br/image/67e428aaa2cc598b508d8246",
+      "https://seazone.com.br/image/67e428aa8384655fd3433f8c",
+      "https://seazone.com.br/image/67e428a825336221643a9ba0"
+    ]
+  },
+  {
+    "code": "NOA0616",
+    "title": "Conforto e praticidade em Santo Amaro - NOA0616",
+    "street": "Av. Ver. José Diniz",
+    "number": "599",
+    "neighborhood": "Santo Amaro",
+    "city": "São Paulo",
+    "state": "SP",
+    "postalCode": "04603-000",
+    "lat": -23.63671186503426,
+    "lng": -46.69375397350671,
+    "guests": 2,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/679a1d04ef687f7172837a76",
+      "https://seazone.com.br/image/679a1d05d50d64e3c57db550",
+      "https://seazone.com.br/image/679a1d07ae9ecd0043f95099",
+      "https://seazone.com.br/image/679a1d034cdfdd98b17ddac9"
+    ]
+  },
+  {
+    "code": "LIV1705",
+    "title": "Studio moderno c/ vista incrível p/ o mar LIV1705",
+    "street": "Avenida Sete de Setembro",
+    "number": "1883",
+    "neighborhood": "Vitória",
+    "city": "Salvador",
+    "state": "BA",
+    "postalCode": "40080-002",
+    "lat": -12.9903183,
+    "lng": -38.5241371,
+    "guests": 2,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/686805e78f21f19748332491",
+      "https://seazone.com.br/image/686805eabcfc8fd46fb91232",
+      "https://seazone.com.br/image/686805e8986546f243bb8bc4",
+      "https://seazone.com.br/image/686805e9da7f9154f886b765"
+    ]
+  },
+  {
+    "code": "GDP0010",
+    "title": "Apto de 1Q com self check-in, Asa Sul - GDP0010",
+    "street": "SEPS 713/913 CONJUNTO A",
+    "number": "S/N",
+    "neighborhood": "Asa Sul",
+    "city": "Brasília",
+    "state": "DF",
+    "postalCode": "70390-135",
+    "lat": -15.817749802142686,
+    "lng": -47.92046718381843,
+    "guests": 2,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/680a58f737c6879a6f17854f",
+      "https://seazone.com.br/image/680a58f7223f0020f5a16021",
+      "https://seazone.com.br/image/680a58fcb2711c5d620a9d32",
+      "https://seazone.com.br/image/680a58fbb2711c5d620a9d26"
+    ]
+  },
+  {
+    "code": "ECM0206",
+    "title": "Estúdio Completo a 900 m da Lagoa ECM0206",
+    "street": "Rua Manoel Isidoro da Silveira",
+    "number": "211",
+    "neighborhood": "Lagoa da Conceição",
+    "city": "Florianópolis",
+    "state": "SC",
+    "postalCode": "88062-130",
+    "lat": -27.6013477,
+    "lng": -48.4689007,
+    "guests": 2,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "images": [
+      "https://seazone.com.br/image/68d152865c1a1cc774f2ccfe",
+      "https://seazone.com.br/image/68d152895a1259d0a7e28803",
+      "https://seazone.com.br/image/68d152866362cdfab1b8c6d9",
+      "https://seazone.com.br/image/68d1528638fe31bf360f256a"
+    ]
+  }
+]

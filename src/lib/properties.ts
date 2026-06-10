@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { fetchSeazoneProperty } from "@/lib/seazone-api";
 import type { Amenities, Property } from "@/lib/types";
 import type { PropertyModel as PropertyRow } from "@/generated/prisma/models";
 
@@ -52,23 +51,35 @@ function toProperty(row: PropertyRow): Property {
 
 /**
  * Busca um imóvel pelo código (ex: FLN001). Normaliza para maiúsculas.
- * Camada de dados híbrida: usa o seed local (imóveis-exemplo do desafio) e,
- * se não encontrar, consulta a API pública da Seazone (imóveis reais).
- * Retorna null se não existir em nenhuma fonte.
+ * Os dados ficam todos no banco (imóveis-exemplo do desafio + um snapshot de
+ * imóveis reais da Seazone, populados pelo seed). Retorna null se não existir.
  */
 export async function getProperty(code: string): Promise<Property | null> {
-  const normalized = code.toUpperCase();
-
   const row = await prisma.property.findUnique({
-    where: { code: normalized },
+    where: { code: code.toUpperCase() },
   });
-  if (row) return toProperty(row);
-
-  return fetchSeazoneProperty(normalized);
+  return row ? toProperty(row) : null;
 }
 
 /** Lista todos os códigos de imóvel — usado para gerar páginas estáticas. */
 export async function getAllPropertyCodes(): Promise<string[]> {
   const rows = await prisma.property.findMany({ select: { code: true } });
   return rows.map((r) => r.code);
+}
+
+/** Dados resumidos de todos os imóveis para os cards da landing. */
+export async function getAllPropertyCards(): Promise<
+  { code: string; name: string; city: string; state: string; image?: string }[]
+> {
+  const rows = await prisma.property.findMany({
+    select: { code: true, name: true, city: true, state: true, images: true },
+    orderBy: { code: "asc" },
+  });
+  return rows.map((r) => ({
+    code: r.code,
+    name: r.name,
+    city: r.city,
+    state: r.state,
+    image: r.images[0],
+  }));
 }

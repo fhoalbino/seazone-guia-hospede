@@ -49,9 +49,11 @@ Template em `.env.example`. Nunca commitar `.env`.
 
 ## Arquitetura
 
-- **Camada de dados híbrida** (`src/lib/properties.ts` → `getProperty`):
-  primeiro o seed local (imóveis-exemplo do desafio); senão a **API pública
-  da Seazone** (`src/lib/seazone-api.ts`, qualquer código real funciona).
+- **Camada de dados no banco** (`src/lib/properties.ts` → `getProperty`): tudo
+  vem do Postgres, populado pelo seed (2 exemplos do desafio + snapshot de 10
+  imóveis reais em `prisma/real-properties.json`). Sem chamada externa em runtime
+  (a busca dinâmica na API da Seazone foi removida para não depender de algo que
+  pode mudar/cair). `getProperty` consulta só o banco; código inexistente → 404.
 - **Segredos da estadia** (WiFi/fechadura/anfitrião) não são públicos na API →
   mock determinístico (`src/lib/operational-mock.ts`); em produção viriam do
   endpoint autenticado de reserva. Documentado no README.

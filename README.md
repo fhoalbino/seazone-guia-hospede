@@ -12,9 +12,10 @@ dúvidas sobre o imóvel em tempo real.
 - **App:** https://seazone-guia-hospede.vercel.app
 - Imóveis de exemplo (dados do desafio): `/FLN001` (Florianópolis/SC) e
   `/GRM001` (Gramado/RS)
-- Imóveis **reais** (via API pública da Seazone): `/AMC0204` (Florianópolis),
-  `/CDK0011` (Porto Seguro/BA), `/SPT0205` (Blumenau/SC) — note como o guia da
-  região muda conforme a localização real
+- Imóveis **reais da Seazone** (dados públicos da busca do site, salvos no banco):
+  `/AMC0204` (Florianópolis), `/CDK0011` (Porto Seguro/BA), `/CZZ0504` (Urubici/SC,
+  serra), `/GDP0010` (Brasília/DF) — note como o guia da região muda conforme a
+  localização real de cada um
 - Código inexistente cai numa tela de erro amigável (ex: `/XXX999`)
 
 ## Funcionalidades
@@ -46,8 +47,8 @@ npm run db:seed             # popula os 2 imóveis de exemplo
 npm run dev                 # http://localhost:3000
 ```
 
-Acesse `http://localhost:3000/FLN001` (exemplo do desafio) ou um código real
-como `http://localhost:3000/AMC0204` (buscado na API da Seazone).
+Acesse `http://localhost:3000/FLN001` (exemplo do desafio) ou um imóvel real
+como `http://localhost:3000/AMC0204` (do snapshot salvo pelo seed).
 
 ### Variáveis de ambiente
 
@@ -134,14 +135,15 @@ Automação em camadas, equilibrando velocidade, custo e confiança:
 
 ## Decisões técnicas
 
-- **Camada de dados híbrida + integração com a API da Seazone.** `getProperty(code)`
-  resolve em duas fontes, nesta ordem: (1) o seed local (imóveis-exemplo do desafio,
-  `FLN001`/`GRM001`); (2) se não encontrar, a **API pública da Seazone**
-  (`src/lib/seazone-api.ts`), que busca `/properties/{code}/details` e as amenidades,
-  e normaliza a resposta (snake_case da API para o tipo de domínio em camelCase).
-  Resultado: **qualquer código real de imóvel da Seazone funciona** (ex: `AMC0204`,
-  `CDK0011`, `SPT0205`), não só os dois do desafio, e o guia se adapta à localização
-  real de cada um. Persistência em Postgres via Prisma 7 com driver adapter
+- **Camada de dados no banco (sem dependência externa em runtime).** Todos os
+  imóveis vêm do Postgres, populados pelo seed: os 2 exemplos do desafio
+  (`FLN001`/`GRM001`) e um **snapshot de 10 imóveis reais da Seazone**
+  (`prisma/real-properties.json`), capturado uma vez da API pública de busca do
+  site. `getProperty(code)` consulta apenas o banco — nada de chamada externa por
+  requisição, então a app não quebra se a API da Seazone mudar. O snapshot traz
+  endereço, capacidade e **fotos reais**; os dados que a busca não expõe (tipo,
+  amenidades, regras) são preenchidos de forma determinística no seed
+  (`prisma/seed-data.ts`). Persistência via Prisma 7 com driver adapter
   (`@prisma/adapter-pg`); a mesma `DATABASE_URL` serve dev e produção.
 - **Fronteira de dados sensíveis.** A API pública não expõe segredos da estadia
   (senha do WiFi, código da fechadura, telefone do anfitrião) — eles só são
@@ -188,12 +190,12 @@ Automação em camadas, equilibrando velocidade, custo e confiança:
 ```
 .github/workflows/ ci.yml (push/PR) e e2e.yml (release)
 .husky/            hooks de pre-commit e pre-push
-prisma/            schema, migrations e seed
+prisma/            schema, migrations, seed e real-properties.json (snapshot)
 src/
   app/             rotas (/[code], home, api/chat, api/guide)
   components/      atoms, molecules, organisms (+ .test.tsx ao lado)
-  lib/             db, ai, properties, seazone-api, places, weather, guide,
-                   chat-context, labels, types (+ .test.ts ao lado)
+  lib/             db, ai, properties, places, weather, guide,
+                   chat-context, chat-stream, labels, types (+ .test.ts ao lado)
   e2e/             specs Playwright (property-page, guide, chat)
   test/            setup do Vitest (jest-dom)
   generated/       client Prisma (gerado)

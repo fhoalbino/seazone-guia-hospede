@@ -1,45 +1,32 @@
-import { prisma } from "@/lib/db";
-import { FEATURED_REAL_CODES, fetchPropertyPreview } from "@/lib/seazone-api";
+import { getAllPropertyCards } from "@/lib/properties";
 import { Hero } from "./_landing/Hero";
 import { Features } from "./_landing/Features";
 import { PropertyGrid, type PropertyCard } from "./_landing/PropertyGrid";
 import { Footer } from "./_landing/Footer";
 
-export default async function Home() {
-  // Busca seeds do banco e 18 reais da Seazone API em paralelo.
-  const [seedRows, realPreviews] = await Promise.all([
-    prisma.property.findMany({
-      select: { code: true, name: true, city: true, state: true, images: true },
-      orderBy: { code: "asc" },
-    }),
-    Promise.all(FEATURED_REAL_CODES.map(fetchPropertyPreview)),
-  ]);
+// Imóveis-exemplo fornecidos no desafio (recebem o selo "Exemplo").
+const CHALLENGE_CODES = new Set(["FLN001", "GRM001"]);
 
-  const seedCards: PropertyCard[] = seedRows.map((p) => ({
+export default async function Home() {
+  const rows = await getAllPropertyCards();
+
+  const cards: PropertyCard[] = rows.map((p) => ({
     code: p.code,
     name: p.name,
     city: p.city,
     state: p.state,
-    type: "seed",
-    image: p.images[0] ?? undefined,
+    type: CHALLENGE_CODES.has(p.code) ? "seed" : "real",
+    image: p.image ?? undefined,
   }));
 
-  const realCards: PropertyCard[] = realPreviews
-    .filter((p): p is NonNullable<typeof p> => p !== null)
-    .map((p) => ({
-      code: p.code,
-      name: p.name,
-      city: p.city,
-      state: p.state,
-      type: "real",
-      image: p.image ?? undefined,
-    }));
+  // Exemplos do desafio primeiro, depois os imóveis reais.
+  cards.sort((a, b) => Number(b.type === "seed") - Number(a.type === "seed"));
 
   return (
     <>
       <Hero />
       <Features />
-      <PropertyGrid properties={[...seedCards, ...realCards]} />
+      <PropertyGrid properties={cards} />
       <Footer />
     </>
   );
