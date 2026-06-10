@@ -68,19 +68,17 @@ export interface PropertyPreview {
   image: string | null;
 }
 
-// 18 imóveis reais da Seazone com variedade de destinos.
+// 10 imóveis reais da Seazone, mantendo variedade de destinos (Jurerê, Ingleses,
+// Porto Seguro e Blumenau) para o guia mudar conforme a região.
 export const FEATURED_REAL_CODES = [
   // Jurerê Internacional Resort — Florianópolis/SC
-  "ILC1206", "ILC1211", "ILC1306", "ILC1406", "ILC2106",
-  "ILC2305", "ILC2403", "ILC3103", "ILC3308", "ILC3401",
+  "ILC1206", "ILC1211", "ILC1306",
   // Ingleses — Florianópolis/SC
   "AMC0202", "AMC0204",
   // Porto Seguro/BA
   "CDK0011",
   // Blumenau/SC
   "SPT0203", "SPT0204", "SPT0205", "SPT0208",
-  // Mais Jurerê
-  "ILC4102", "ILC4404",
 ] as const;
 
 /** Busca nome, cidade e imagem de um imóvel para o card da landing page. */
