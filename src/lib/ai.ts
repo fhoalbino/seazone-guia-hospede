@@ -1,10 +1,11 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 
-// Modelos centralizados — fácil de trocar/auditar. Ambos no MiniMax-M2:
-// - Guia: structured output (generateObject + Zod) — validado, M2 suporta tool use.
+// Modelos centralizados — fácil de trocar/auditar. Ambos no MiniMax-M2.7
+// (mais recente; segue melhor a instrução de PT-BR e suporta tool use):
+// - Guia: structured output (generateObject + Zod) — validado.
 // - Chat: streaming.
-export const GUIDE_MODEL = "MiniMax-M2";
-export const CHAT_MODEL = "MiniMax-M2";
+export const GUIDE_MODEL = "MiniMax-M2.7";
+export const CHAT_MODEL = "MiniMax-M2.7";
 
 // MiniMax pela subscription (Coding Plan) = endpoint Anthropic-compatible, então
 // usamos o provider Anthropic com baseURL apontado pro MiniMax.
