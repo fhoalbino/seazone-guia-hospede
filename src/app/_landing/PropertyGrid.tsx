@@ -25,13 +25,13 @@ const card: Variants = {
 
 function Card({ p }: { p: PropertyCard }) {
   return (
-    <motion.div variants={card}>
+    <motion.div variants={card} className="h-full">
       <Link
         href={`/${p.code}`}
-        className="group block overflow-hidden rounded-3xl bg-cream shadow-[0_2px_24px_rgba(58,46,38,0.06)] ring-1 ring-line transition hover:shadow-md hover:ring-clay"
+        className="group flex h-full flex-col overflow-hidden rounded-3xl bg-cream shadow-[0_2px_24px_rgba(58,46,38,0.06)] ring-1 ring-line transition hover:shadow-md hover:ring-clay"
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-sand">
+        <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-sand">
           {p.image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -58,9 +58,11 @@ function Card({ p }: { p: PropertyCard }) {
         </div>
 
         {/* Info */}
-        <div className="p-4">
-          <p className="font-display text-lg font-semibold leading-snug text-bark">{p.name}</p>
-          <div className="mt-1 flex items-center justify-between">
+        <div className="flex flex-1 flex-col p-4">
+          <p className="line-clamp-2 min-h-[3.25rem] font-display text-lg font-semibold leading-snug text-bark">
+            {p.name}
+          </p>
+          <div className="mt-auto flex items-center justify-between pt-2">
             <p className="text-sm text-stone">
               {p.city} — {p.state}
             </p>
