@@ -1,5 +1,6 @@
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { chatModel } from "@/lib/ai";
+import { cjkStripTransform } from "@/lib/chat-stream";
 import { prisma } from "@/lib/db";
 import { getProperty } from "@/lib/properties";
 import { buildChatSystemPrompt } from "@/lib/chat-context";
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
     model: chatModel,
     system,
     messages: await convertToModelMessages(messages),
+    experimental_transform: cjkStripTransform(),
   });
 
   return result.toUIMessageStreamResponse();
