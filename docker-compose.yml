@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      # DATABASE_URL é injetada só no build (generateStaticParams lê o banco).
+      secrets:
+        - database_url
+    image: seazone-guia-hospede
+    # Runtime: DATABASE_URL, MINIMAX_API_KEY e GOOGLE_API_KEY vêm do .env.
+    env_file: .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+# Lê o valor da variável DATABASE_URL do ambiente do compose (carregado do .env).
+secrets:
+  database_url:
+    environment: DATABASE_URL
