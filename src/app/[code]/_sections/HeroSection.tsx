@@ -1,17 +1,13 @@
 import { notFound } from "next/navigation";
 import { Sparkles } from "lucide-react";
+import { getProperty } from "@/lib/properties";
 import { PropertyHero } from "@/components/organisms/PropertyHero";
 import { AmenityList } from "@/components/molecules/AmenityList";
 import { Section } from "@/components/atoms/Section";
 import { Reveal } from "@/components/atoms/Reveal";
-import type { Property } from "@/lib/types";
 
-export async function HeroSection({
-  propertyPromise,
-}: {
-  propertyPromise: Promise<Property | null>;
-}) {
-  const property = await propertyPromise;
+export async function HeroSection({ code }: { code: string }) {
+  const property = await getProperty(code);
   if (!property) notFound();
   return (
     <>

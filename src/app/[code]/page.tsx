@@ -29,26 +29,25 @@ export default async function PropertyGuidePage({
   params,
 }: PageProps<"/[code]">) {
   const { code } = await params;
-  const propertyPromise = getProperty(code);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-6">
       <Suspense fallback={<HeroSkeleton />}>
-        <HeroSection propertyPromise={propertyPromise} />
+        <HeroSection code={code} />
       </Suspense>
 
       <Suspense fallback={<AccessSkeleton />}>
-        <AccessSection propertyPromise={propertyPromise} />
+        <AccessSection code={code} />
       </Suspense>
 
       <Suspense fallback={<RulesSkeleton />}>
-        <RulesSection propertyPromise={propertyPromise} />
+        <RulesSection code={code} />
       </Suspense>
 
       <ExperienceGuideClient key={code} code={code} />
 
       <Suspense fallback={<ContactSkeleton />}>
-        <ContactSection propertyPromise={propertyPromise} />
+        <ContactSection code={code} />
       </Suspense>
 
       <ChatWidget code={code} />

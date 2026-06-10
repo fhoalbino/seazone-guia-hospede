@@ -1,13 +1,9 @@
+import { getProperty } from "@/lib/properties";
 import { ContactCard } from "@/components/organisms/ContactCard";
 import { Reveal } from "@/components/atoms/Reveal";
-import type { Property } from "@/lib/types";
 
-export async function ContactSection({
-  propertyPromise,
-}: {
-  propertyPromise: Promise<Property | null>;
-}) {
-  const property = await propertyPromise;
+export async function ContactSection({ code }: { code: string }) {
+  const property = await getProperty(code);
   if (!property) return null;
   return (
     <Reveal delay={0.2}>
