@@ -163,30 +163,59 @@ export async function getOrCreateGuide(
     where: { propertyCode: property.code },
   });
 
-  if (existing) {
-    return {
-      welcomeMessage: existing.welcomeMessage,
-      restaurants: existing.restaurants as unknown as ExperienceGuide["restaurants"],
-      attractions: existing.attractions as unknown as ExperienceGuide["attractions"],
-      essentials: existing.essentials as unknown as ExperienceGuide["essentials"],
-      seasonalTip: existing.seasonalTip,
-    };
-  }
+  if (existing) return rowToGuide(existing);
 
   const prompt = await buildPrompt(property);
   const object = await generateGuideObject(prompt);
 
-  await prisma.experienceGuide.create({
-    data: {
-      propertyCode: property.code,
-      welcomeMessage: object.welcomeMessage,
-      restaurants: object.restaurants,
-      attractions: object.attractions,
-      essentials: object.essentials,
-      seasonalTip: object.seasonalTip,
-      model: GUIDE_MODEL,
-    },
-  });
+  try {
+    await prisma.experienceGuide.create({
+      data: {
+        propertyCode: property.code,
+        welcomeMessage: object.welcomeMessage,
+        restaurants: object.restaurants,
+        attractions: object.attractions,
+        essentials: object.essentials,
+        seasonalTip: object.seasonalTip,
+        model: GUIDE_MODEL,
+      },
+    });
+    return object;
+  } catch (err) {
+    // Corrida: outra requisição gerou e persistiu o guia primeiro (acessos
+    // simultâneos ao mesmo imóvel ainda sem guia). A constraint única dispara;
+    // relemos e devolvemos o que já foi persistido em vez de quebrar.
+    if (isUniqueConstraintError(err)) {
+      const persisted = await prisma.experienceGuide.findUnique({
+        where: { propertyCode: property.code },
+      });
+      if (persisted) return rowToGuide(persisted);
+    }
+    throw err;
+  }
+}
 
-  return object;
+type GuideRow = NonNullable<
+  Awaited<ReturnType<typeof prisma.experienceGuide.findUnique>>
+>;
+
+/** Mapeia a linha persistida do guia para o tipo de domínio. */
+function rowToGuide(row: GuideRow): ExperienceGuide {
+  return {
+    welcomeMessage: row.welcomeMessage,
+    restaurants: row.restaurants as unknown as ExperienceGuide["restaurants"],
+    attractions: row.attractions as unknown as ExperienceGuide["attractions"],
+    essentials: row.essentials as unknown as ExperienceGuide["essentials"],
+    seasonalTip: row.seasonalTip,
+  };
+}
+
+/** Detecta a violação de constraint única do Prisma (P2002). */
+function isUniqueConstraintError(err: unknown): boolean {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "code" in err &&
+    (err as { code?: string }).code === "P2002"
+  );
 }
