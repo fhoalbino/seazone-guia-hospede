@@ -45,9 +45,22 @@ export async function geocodeAddress(address: string): Promise<LatLng | null> {
   return { lat: loc.lat, lng: loc.lng };
 }
 
+/** Distância em linha reta entre dois pontos (fórmula de Haversine). */
+function haversineKm(a: LatLng, b: LatLng): number {
+  const R = 6371;
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) *
+      Math.cos((b.lat * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.asin(Math.sqrt(h));
+}
+
 interface PlacesApiPlace {
   displayName?: { text?: string };
-  distanceMeters?: number;
+  location?: { latitude?: number; longitude?: number };
 }
 
 /** Busca lugares próximos de dados tipos via Places API (New). */
@@ -55,22 +68,24 @@ async function searchNearby(
   origin: LatLng,
   includedTypes: string[],
   maxResultCount: number,
-  radius = 3000,
+  radiusMeters = 3000,
 ): Promise<{ name: string; distanceMeters: number }[]> {
   const res = await fetch(NEARBY_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": apiKey(),
-      "X-Goog-FieldMask": "places.displayName,places.distanceMeters",
+      "X-Goog-FieldMask": "places.displayName,places.location",
     },
     body: JSON.stringify({
       includedTypes,
       maxResultCount,
       locationRestriction: {
-        circle: { center: { latitude: origin.lat, longitude: origin.lng }, radius },
+        circle: {
+          center: { latitude: origin.lat, longitude: origin.lng },
+          radius: radiusMeters,
+        },
       },
-      rankPreference: "DISTANCE",
       languageCode: "pt-BR",
     }),
     next: { revalidate: 86400 },
@@ -79,11 +94,17 @@ async function searchNearby(
   const data = await res.json();
   const places: PlacesApiPlace[] = data.places ?? [];
   return places
-    .filter((p) => p.displayName?.text && p.distanceMeters != null)
-    .map((p) => ({
-      name: p.displayName!.text!,
-      distanceMeters: p.distanceMeters!,
-    }));
+    .filter((p) => p.displayName?.text && p.location?.latitude != null)
+    .map((p) => {
+      const placeLatLng: LatLng = {
+        lat: p.location!.latitude!,
+        lng: p.location!.longitude!,
+      };
+      return {
+        name: p.displayName!.text!,
+        distanceMeters: Math.round(haversineKm(origin, placeLatLng) * 1000),
+      };
+    });
 }
 
 function toNearby(
@@ -104,11 +125,11 @@ function toNearby(
 export async function getNearbyForGuide(origin: LatLng): Promise<NearbyResult> {
   const [restaurants, attractions, pharmacies, markets, hospitals] =
     await Promise.all([
-      searchNearby(origin, ["restaurant"], 6),
-      searchNearby(origin, ["tourist_attraction"], 5),
-      searchNearby(origin, ["pharmacy"], 2),
-      searchNearby(origin, ["supermarket"], 2),
-      searchNearby(origin, ["hospital"], 1),
+      searchNearby(origin, ["restaurant"], 6, 3000),
+      searchNearby(origin, ["tourist_attraction", "beach", "park"], 5, 25000),
+      searchNearby(origin, ["pharmacy"], 2, 3000),
+      searchNearby(origin, ["supermarket"], 2, 3000),
+      searchNearby(origin, ["hospital"], 1, 10000),
     ]);
 
   return {
