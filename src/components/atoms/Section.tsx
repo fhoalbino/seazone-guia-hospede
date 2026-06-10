@@ -9,10 +9,10 @@ interface SectionProps {
 /** Cartão de seção com título e ícone. Bloco visual base do guia. */
 export function Section({ title, icon, children }: SectionProps) {
   return (
-    <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800">
+    <section className="rounded-3xl bg-cream p-6 shadow-[0_2px_24px_rgba(58,46,38,0.06)] ring-1 ring-line">
+      <h2 className="mb-4 flex items-center gap-2 font-display text-xl font-semibold text-bark">
         {icon && (
-          <span className="text-sky-600" aria-hidden>
+          <span className="text-clay" aria-hidden>
             {icon}
           </span>
         )}

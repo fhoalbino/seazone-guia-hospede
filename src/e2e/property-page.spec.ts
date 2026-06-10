@@ -22,7 +22,8 @@ test.describe("Página do imóvel FLN001", () => {
 
   test("exibe horário de check-in correto", async ({ page }) => {
     await page.goto("/FLN001");
-    await expect(page.getByText(/15:00/)).toBeVisible();
+    // 15:00 aparece no trilho e nas regras; basta confirmar que está presente.
+    await expect(page.getByText(/15:00/).first()).toBeVisible();
   });
 
   test("exibe política de animais", async ({ page }) => {

@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
 
-/** Envolve conteúdo (renderizado no servidor) numa entrada suave fade-in-up. */
+/** Entrada suave fade-in-up disparada quando o conteúdo entra na viewport. */
 export function Reveal({
   children,
   delay = 0,
@@ -13,9 +13,10 @@ export function Reveal({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10% 0px" }}
+      transition={{ duration: 0.45, delay, ease: "easeOut" }}
     >
       {children}
     </motion.div>

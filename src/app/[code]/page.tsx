@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAllPropertyCodes, getProperty } from "@/lib/properties";
-import { PropertyHero } from "@/components/organisms/PropertyHero";
+import { StayRail } from "@/components/organisms/StayRail";
 import { AccessCard } from "@/components/organisms/AccessCard";
 import { RulesCard } from "@/components/organisms/RulesCard";
 import { ContactCard } from "@/components/organisms/ContactCard";
@@ -52,30 +52,32 @@ export default async function PropertyGuidePage({
   if (!property) notFound();
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-6">
-      <Reveal>
-        <PropertyHero property={property} />
-      </Reveal>
+    <main className="theme-stay min-h-screen">
+      <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:gap-10 lg:py-10">
+        <StayRail property={property} />
 
-      <Reveal delay={0.05}>
-        <Section title="Amenidades" icon={<Sparkles className="h-5 w-5" />}>
-          <AmenityList amenities={property.amenities} />
-        </Section>
-      </Reveal>
+        <div className="flex flex-col gap-5">
+          <Reveal>
+            <Section title="Amenidades" icon={<Sparkles className="h-5 w-5" />}>
+              <AmenityList amenities={property.amenities} />
+            </Section>
+          </Reveal>
 
-      <Reveal delay={0.1}>
-        <AccessCard operational={property.operational} />
-      </Reveal>
+          <Reveal>
+            <AccessCard operational={property.operational} />
+          </Reveal>
 
-      <Reveal delay={0.15}>
-        <RulesCard rules={property.rules} />
-      </Reveal>
+          <Reveal>
+            <RulesCard rules={property.rules} />
+          </Reveal>
 
-      <ExperienceGuideClient key={property.code} code={property.code} />
+          <ExperienceGuideClient key={property.code} code={property.code} />
 
-      <Reveal delay={0.2}>
-        <ContactCard host={property.host} address={property.address} />
-      </Reveal>
+          <Reveal>
+            <ContactCard host={property.host} address={property.address} />
+          </Reveal>
+        </div>
+      </div>
 
       <ChatWidgetLazy code={property.code} />
     </main>
