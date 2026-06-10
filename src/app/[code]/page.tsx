@@ -25,21 +25,13 @@ export async function generateMetadata({
   if (!property) return { title: "Imóvel não encontrado · Guia Seazone" };
   const title = `${property.name} · Guia do Hóspede`;
   const description = `Tudo sobre sua estadia em ${property.address.city}: acesso, WiFi, regras e guia de experiências gerado por IA.`;
-  const image = property.images[0];
+  // A imagem de OG/Twitter é o card gerado em opengraph-image.tsx (Next usa o
+  // arquivo de convenção automaticamente). Não apontamos para a foto do imóvel.
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      ...(image ? { images: [{ url: image, width: 1200, height: 630, alt: property.name }] } : {}),
-    },
-    twitter: {
-      card: image ? "summary_large_image" : "summary",
-      title,
-      description,
-      ...(image ? { images: [image] } : {}),
-    },
+    openGraph: { title, description },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
