@@ -60,6 +60,53 @@ async function fetchAmenities(id: number): Promise<Amenities> {
   }
 }
 
+export interface PropertyPreview {
+  code: string;
+  name: string;
+  city: string;
+  state: string;
+  image: string | null;
+}
+
+// 18 imóveis reais da Seazone com variedade de destinos.
+export const FEATURED_REAL_CODES = [
+  // Jurerê Internacional Resort — Florianópolis/SC
+  "ILC1206", "ILC1211", "ILC1306", "ILC1406", "ILC2106",
+  "ILC2305", "ILC2403", "ILC3103", "ILC3308", "ILC3401",
+  // Ingleses — Florianópolis/SC
+  "AMC0202", "AMC0204",
+  // Porto Seguro/BA
+  "CDK0011",
+  // Blumenau/SC
+  "SPT0203", "SPT0204", "SPT0205", "SPT0208",
+  // Mais Jurerê
+  "ILC4102", "ILC4404",
+] as const;
+
+/** Busca nome, cidade e imagem de um imóvel para o card da landing page. */
+export async function fetchPropertyPreview(
+  code: string,
+): Promise<PropertyPreview | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/properties/${code}/details`, {
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return null;
+    const d: SeazoneDetails = await res.json();
+    const a = d.address;
+    const imgs = d.images?.images ?? [];
+    return {
+      code: d.code,
+      name: d.listing_title,
+      city: a.city,
+      state: a.state_code,
+      image: imgs[0]?.url ?? null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Busca um imóvel REAL na API pública da Seazone e o adapta ao domínio.
  * Os campos sensíveis (WiFi, fechadura, anfitrião) são preenchidos com dados
