@@ -27,19 +27,6 @@ function apiKey(): string {
   return k;
 }
 
-/** Distância em km entre dois pontos (haversine). */
-function haversineKm(a: LatLng, b: LatLng): number {
-  const R = 6371;
-  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
-  const lat1 = (a.lat * Math.PI) / 180;
-  const lat2 = (b.lat * Math.PI) / 180;
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
-}
-
 function formatDistance(km: number): string {
   const meters = Math.round(km * 1000);
   if (meters < 60) return "a poucos passos";
@@ -60,7 +47,7 @@ export async function geocodeAddress(address: string): Promise<LatLng | null> {
 
 interface PlacesApiPlace {
   displayName?: { text?: string };
-  location?: { latitude: number; longitude: number };
+  distanceMeters?: number;
 }
 
 /** Busca lugares próximos de dados tipos via Places API (New). */
@@ -69,13 +56,13 @@ async function searchNearby(
   includedTypes: string[],
   maxResultCount: number,
   radius = 3000,
-): Promise<{ name: string; loc: LatLng }[]> {
+): Promise<{ name: string; distanceMeters: number }[]> {
   const res = await fetch(NEARBY_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": apiKey(),
-      "X-Goog-FieldMask": "places.displayName,places.location",
+      "X-Goog-FieldMask": "places.displayName,places.distanceMeters",
     },
     body: JSON.stringify({
       includedTypes,
@@ -92,21 +79,20 @@ async function searchNearby(
   const data = await res.json();
   const places: PlacesApiPlace[] = data.places ?? [];
   return places
-    .filter((p) => p.displayName?.text && p.location)
+    .filter((p) => p.displayName?.text && p.distanceMeters != null)
     .map((p) => ({
       name: p.displayName!.text!,
-      loc: { lat: p.location!.latitude, lng: p.location!.longitude },
+      distanceMeters: p.distanceMeters!,
     }));
 }
 
 function toNearby(
-  origin: LatLng,
-  items: { name: string; loc: LatLng }[],
+  items: { name: string; distanceMeters: number }[],
   type?: string,
 ): NearbyPlace[] {
   return items.map((it) => ({
     name: it.name,
-    distance: formatDistance(haversineKm(origin, it.loc)),
+    distance: formatDistance(it.distanceMeters / 1000),
     ...(type ? { type } : {}),
   }));
 }
@@ -126,12 +112,12 @@ export async function getNearbyForGuide(origin: LatLng): Promise<NearbyResult> {
     ]);
 
   return {
-    restaurants: toNearby(origin, restaurants),
-    attractions: toNearby(origin, attractions),
+    restaurants: toNearby(restaurants),
+    attractions: toNearby(attractions),
     essentials: [
-      ...toNearby(origin, pharmacies, "pharmacy"),
-      ...toNearby(origin, markets, "supermarket"),
-      ...toNearby(origin, hospitals, "hospital"),
+      ...toNearby(pharmacies, "pharmacy"),
+      ...toNearby(markets, "supermarket"),
+      ...toNearby(hospitals, "hospital"),
     ],
   };
 }
