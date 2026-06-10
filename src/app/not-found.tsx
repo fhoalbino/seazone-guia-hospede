@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Compass } from "lucide-react";
 
-export default function PropertyNotFound() {
+export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-[70vh] w-full max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
       <Compass className="h-14 w-14 text-sky-600" aria-hidden />

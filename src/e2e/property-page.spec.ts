@@ -40,6 +40,11 @@ test.describe("Página 404", () => {
     ).toBeVisible();
   });
 
+  test("código inexistente responde com status HTTP 404", async ({ page }) => {
+    const response = await page.goto("/XXX999");
+    expect(response?.status()).toBe(404);
+  });
+
   test("página de erro tem link para voltar ao início", async ({ page }) => {
     await page.goto("/XXX999");
     await expect(

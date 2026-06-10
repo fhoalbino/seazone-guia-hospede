@@ -12,6 +12,11 @@ import { Section } from "@/components/atoms/Section";
 import { Reveal } from "@/components/atoms/Reveal";
 import { Sparkles } from "lucide-react";
 
+// O conjunto de códigos válidos é conhecido no build (vem do banco já semeado).
+// Sem isto, um código fora da lista é gerado on-demand e o not-found acaba
+// cacheado como 200 no full route cache; com `false`, o Next devolve 404 real.
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const codes = await getAllPropertyCodes();
   return codes.map((code) => ({ code }));
