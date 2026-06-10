@@ -33,6 +33,28 @@ export function ChatWidget({ code }: { code: string }) {
 
   const busy = status === "submitted" || status === "streaming";
 
+  // Vaul reposiciona o drawer (style.bottom/height inline) quando o teclado
+  // mobile abre. Se o foco sai do input ao fechar (toque em Enviar/sugestão), o
+  // reset interno dele não zera o `bottom` e o drawer fica "flutuando". Quando o
+  // teclado fecha, limpamos os estilos inline para o CSS reassumir a posição.
+  const contentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!open || !vv) return;
+    function onResize() {
+      const keyboardClosed = window.innerHeight - vv!.height < 60;
+      if (!keyboardClosed) return;
+      requestAnimationFrame(() => {
+        const el = contentRef.current;
+        if (!el) return;
+        el.style.bottom = "";
+        el.style.height = "";
+      });
+    }
+    vv.addEventListener("resize", onResize);
+    return () => vv.removeEventListener("resize", onResize);
+  }, [open]);
+
   // Rola para o fim quando chega mensagem nova ou durante o streaming — mas só se
   // o usuário já está perto da base (não interrompe quem rolou pra ler o histórico).
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -66,7 +88,10 @@ export function ChatWidget({ code }: { code: string }) {
       <Drawer.Root open={open} onOpenChange={setOpen}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
-          <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 flex h-[82vh] flex-col overflow-hidden rounded-t-2xl bg-white outline-none sm:inset-x-auto sm:right-5 sm:h-[620px] sm:w-[26rem]">
+          <Drawer.Content
+            ref={contentRef}
+            className="fixed inset-x-0 bottom-0 z-50 flex h-[82dvh] flex-col overflow-hidden rounded-t-2xl bg-white outline-none sm:inset-x-auto sm:right-5 sm:h-[620px] sm:w-[26rem]"
+          >
             {/* alça de arrastar (mobile) */}
             <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-slate-300 sm:hidden" />
 
