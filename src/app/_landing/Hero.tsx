@@ -27,8 +27,8 @@ export function Hero() {
           className="flex flex-col items-center gap-7"
         >
           <motion.div variants={item}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#38bdf8]/30 bg-[#38bdf8]/10 px-4 py-1.5 text-sm font-medium text-[#38bdf8]">
-              <Sparkles className="h-3.5 w-3.5" />
+            <span className="inline-flex items-start gap-2 rounded-full border border-[#38bdf8]/30 bg-[#38bdf8]/10 px-4 py-1.5 text-sm font-medium text-[#38bdf8] sm:items-center">
+              <Sparkles className="mt-[3px] h-3.5 w-3.5 shrink-0 sm:mt-0" />
               Guia gerado por IA · Assistente em tempo real
             </span>
           </motion.div>
@@ -49,17 +49,20 @@ export function Hero() {
             experiências locais e assistente virtual — tudo em um link.
           </motion.p>
 
-          <motion.div variants={item} className="flex flex-wrap justify-center gap-3">
+          <motion.div
+            variants={item}
+            className="flex w-full max-w-sm flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:justify-center"
+          >
             <Link
               href="/FLN001"
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-white shadow-lg shadow-accent/25 transition hover:bg-accent-strong"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-white shadow-lg shadow-accent/25 transition hover:bg-accent-strong"
             >
               Ver guia de exemplo
               <ArrowRight className="h-4 w-4" />
             </Link>
             <a
               href="#imoveis"
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 font-medium text-white transition hover:bg-white/10"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
             >
               Explorar imóveis
             </a>
