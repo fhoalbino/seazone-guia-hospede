@@ -28,7 +28,7 @@ function apiKey(): string {
   return k;
 }
 
-function formatDistance(meters: number): string {
+export function formatDistance(meters: number): string {
   if (meters < 60) return "a poucos passos";
   if (meters < 1000) return `Aprox. ${meters} m`;
   const km = meters / 1000;
