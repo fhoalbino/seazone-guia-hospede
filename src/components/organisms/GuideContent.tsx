@@ -61,10 +61,10 @@ export function GuideContent({ guide }: { guide: ExperienceGuide }) {
 /** Skeleton exibido enquanto a IA gera o guia (feedback visual). */
 export function GuideSkeleton() {
   return (
-    <div className="rounded-3xl bg-cream p-6 shadow-[0_2px_24px_rgba(58,46,38,0.06)] ring-1 ring-line">
+    <div className="rounded-3xl bg-card p-6 shadow-[0_2px_24px_rgba(16,42,67,0.06)] ring-1 ring-line">
       <div className="flex items-center gap-3">
-        <span className="h-5 w-5 animate-spin rounded-full border-2 border-clay/30 border-t-clay" />
-        <p className="font-medium text-bark">
+        <span className="h-5 w-5 animate-spin rounded-full border-2 border-accent/30 border-t-accent" />
+        <p className="font-medium text-ink">
           Gerando seu guia personalizado da região…
         </p>
       </div>

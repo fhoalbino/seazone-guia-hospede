@@ -23,9 +23,9 @@ export function StayRail({ property }: { property: Property }) {
 
   return (
     <aside className="lg:sticky lg:top-6 lg:self-start">
-      <div className="overflow-hidden rounded-3xl bg-cream shadow-[0_2px_24px_rgba(58,46,38,0.08)] ring-1 ring-line">
+      <div className="overflow-hidden rounded-3xl bg-card shadow-[0_2px_24px_rgba(16,42,67,0.08)] ring-1 ring-line">
         {/* Hero */}
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-bark/10">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink/10">
           {cover && (
             <Image
               src={cover}
@@ -36,15 +36,15 @@ export function StayRail({ property }: { property: Property }) {
               className="animate-kenburns object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-bark/80 via-bark/10 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 p-5 text-cream">
-            <span className="inline-block rounded-full bg-cream/15 px-2.5 py-0.5 text-xs font-medium backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-5 text-card">
+            <span className="inline-block rounded-full bg-card/15 px-2.5 py-0.5 text-xs font-medium backdrop-blur-sm">
               {property.propertyType}
             </span>
             <h1 className="mt-2 font-display text-3xl leading-tight font-semibold drop-shadow-sm">
               {property.name}
             </h1>
-            <p className="mt-1 flex items-center gap-1 text-sm text-cream/90">
+            <p className="mt-1 flex items-center gap-1 text-sm text-card/90">
               <MapPin className="h-4 w-4 shrink-0" />
               {address.neighborhood}, {address.city} · {address.state}
             </p>
@@ -60,7 +60,7 @@ export function StayRail({ property }: { property: Property }) {
           </dl>
 
           {/* Check-in / out */}
-          <div className="flex items-center justify-between rounded-2xl bg-sand px-4 py-3 ring-1 ring-line">
+          <div className="flex items-center justify-between rounded-2xl bg-surface px-4 py-3 ring-1 ring-line">
             <Time icon label="Check-in" value={rules.checkInTime} />
             <span className="h-8 w-px bg-line" />
             <Time label="Check-out" value={rules.checkOutTime} />
@@ -74,11 +74,11 @@ export function StayRail({ property }: { property: Property }) {
             href={whatsappLink(host.phone)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-clay px-4 py-3 text-sm font-semibold text-cream transition hover:bg-clay-dark active:scale-[0.98]"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-card transition hover:bg-accent-strong active:scale-[0.98]"
           >
             <MessageCircle className="h-4 w-4" />
             Falar com {host.name.split(" ")[0]}
-            <span className="text-cream/70">· {formatPhone(host.phone)}</span>
+            <span className="text-card/70">· {formatPhone(host.phone)}</span>
           </a>
         </div>
       </div>
@@ -88,14 +88,14 @@ export function StayRail({ property }: { property: Property }) {
 
 function Stat({ icon, value, label }: { icon: ReactNode; value: number; label: string }) {
   return (
-    <div className="rounded-2xl bg-sand py-3 ring-1 ring-line">
-      <dd className="flex items-center justify-center gap-1.5 text-xl font-semibold text-bark">
-        <span aria-hidden className="text-clay">
+    <div className="rounded-2xl bg-surface py-3 ring-1 ring-line">
+      <dd className="flex items-center justify-center gap-1.5 text-xl font-semibold text-ink">
+        <span aria-hidden className="text-accent">
           {icon}
         </span>
         <CountUp value={value} />
       </dd>
-      <dt className="text-xs text-stone">{label}</dt>
+      <dt className="text-xs text-muted">{label}</dt>
     </div>
   );
 }
@@ -103,11 +103,11 @@ function Stat({ icon, value, label }: { icon: ReactNode; value: number; label: s
 function Time({ icon, label, value }: { icon?: boolean; label: string; value: string }) {
   return (
     <div className="flex flex-col">
-      <span className="flex items-center gap-1 text-xs text-stone">
+      <span className="flex items-center gap-1 text-xs text-muted">
         {icon && <Clock className="h-3 w-3" />}
         {label}
       </span>
-      <span className="text-lg font-semibold text-bark">{value}</span>
+      <span className="text-lg font-semibold text-ink">{value}</span>
     </div>
   );
 }

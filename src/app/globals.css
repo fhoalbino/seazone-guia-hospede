@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5efe6; /* areia */
-  --foreground: #3a2e26; /* terroso (bark) */
+  --background: #eef2f7; /* azul-cinza claro */
+  --foreground: #102a43; /* navy Seazone */
 }
 
 @theme inline {
@@ -12,14 +12,14 @@
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-display);
 
-  /* Paleta editorial quente (página de imóvel) */
-  --color-sand: #f5efe6;
-  --color-cream: #fffdfa;
-  --color-clay: #c26b4a;
-  --color-clay-dark: #a8543a;
-  --color-bark: #3a2e26;
-  --color-stone: #8a7d70;
-  --color-line: #e7dccd;
+  /* Paleta Seazone (azul) */
+  --color-surface: #eef2f7; /* fundo das seções */
+  --color-card: #ffffff; /* cartões */
+  --color-accent: #0284c7; /* azul Seazone */
+  --color-accent-strong: #0369a1; /* azul mais escuro (hover) */
+  --color-ink: #102a43; /* texto/títulos navy */
+  --color-muted: #64748b; /* texto secundário */
+  --color-line: #e2e8f0; /* bordas */
 }
 
 body {
@@ -28,10 +28,10 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* Tema da página de estadia: fundo areia + texto terroso. */
+/* Tema da página de estadia: fundo azul-claro + texto navy. */
 .theme-stay {
-  background: var(--color-sand);
-  color: var(--color-bark);
+  background: var(--color-surface);
+  color: var(--color-ink);
 }
 
 /* Zoom lento (ken burns) no hero. */

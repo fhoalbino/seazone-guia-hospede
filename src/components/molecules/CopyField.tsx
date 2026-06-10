@@ -23,11 +23,11 @@ export function CopyField({ label, value, mono = true }: CopyFieldProps) {
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl bg-sand px-4 py-3 ring-1 ring-line">
+    <div className="flex items-center justify-between gap-3 rounded-xl bg-surface px-4 py-3 ring-1 ring-line">
       <div className="min-w-0">
-        <p className="text-xs text-stone">{label}</p>
+        <p className="text-xs text-muted">{label}</p>
         <p
-          className={`truncate text-bark ${mono ? "font-mono" : "font-medium"}`}
+          className={`truncate text-ink ${mono ? "font-mono" : "font-medium"}`}
         >
           {value}
         </p>
@@ -35,7 +35,7 @@ export function CopyField({ label, value, mono = true }: CopyFieldProps) {
       <button
         type="button"
         onClick={copy}
-        className="shrink-0 rounded-lg bg-cream px-3 py-1.5 text-sm font-medium text-clay ring-1 ring-clay/30 transition hover:bg-clay/10 active:scale-95"
+        className="shrink-0 rounded-lg bg-card px-3 py-1.5 text-sm font-medium text-accent ring-1 ring-accent/30 transition hover:bg-accent/10 active:scale-95"
         aria-label={`Copiar ${label}`}
       >
         {copied ? "Copiado ✓" : "Copiar"}

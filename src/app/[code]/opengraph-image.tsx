@@ -17,7 +17,7 @@ export default async function OGImage({ params }: { params: Promise<{ code: stri
     (
       <div
         style={{
-          background: "#2a211b",
+          background: "#0B1E3D",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -38,7 +38,7 @@ export default async function OGImage({ params }: { params: Promise<{ code: stri
             right: -80,
             width: 600,
             height: 600,
-            background: "radial-gradient(ellipse, rgba(194,107,74,0.30) 0%, transparent 65%)",
+            background: "radial-gradient(ellipse, rgba(14,165,233,0.30) 0%, transparent 65%)",
             borderRadius: "50%",
           }}
         />
@@ -49,15 +49,15 @@ export default async function OGImage({ params }: { params: Promise<{ code: stri
             display: "flex",
             alignItems: "center",
             gap: 12,
-            background: "rgba(232,168,124,0.12)",
-            border: "1px solid rgba(232,168,124,0.35)",
+            background: "rgba(56,189,248,0.12)",
+            border: "1px solid rgba(56,189,248,0.35)",
             borderRadius: 100,
             padding: "10px 24px",
             zIndex: 1,
           }}
         >
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#e8a87c" }} />
-          <span style={{ color: "#e8a87c", fontSize: 20, fontWeight: 600 }}>
+          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#38bdf8" }} />
+          <span style={{ color: "#38bdf8", fontSize: 20, fontWeight: 600 }}>
             seazone · guia do hóspede
           </span>
         </div>
@@ -65,7 +65,7 @@ export default async function OGImage({ params }: { params: Promise<{ code: stri
         {/* Property info */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16, zIndex: 1 }}>
           {type ? (
-            <span style={{ color: "#e8a87c", fontSize: 24, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>
+            <span style={{ color: "#38bdf8", fontSize: 24, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>
               {type}
             </span>
           ) : null}
@@ -82,7 +82,7 @@ export default async function OGImage({ params }: { params: Promise<{ code: stri
             {name}
           </div>
           {city ? (
-            <div style={{ color: "#d8ccbd", fontSize: 32, fontWeight: 400, marginTop: 4 }}>
+            <div style={{ color: "#94a3b8", fontSize: 32, fontWeight: 400, marginTop: 4 }}>
               {city}
             </div>
           ) : null}
@@ -100,10 +100,10 @@ export default async function OGImage({ params }: { params: Promise<{ code: stri
             zIndex: 1,
           }}
         >
-          <span style={{ color: "#a89a8b", fontSize: 20 }}>
+          <span style={{ color: "#64748b", fontSize: 20 }}>
             Acesso · WiFi · Regras · Guia de experiências por IA
           </span>
-          <span style={{ color: "#e8a87c", fontSize: 20, fontWeight: 600 }}>
+          <span style={{ color: "#38bdf8", fontSize: 20, fontWeight: 600 }}>
             /{code.toUpperCase()}
           </span>
         </div>

@@ -9,11 +9,11 @@ interface PlaceCardProps {
 /** Cartão de um local do guia (restaurante, atração, serviço). */
 export function PlaceCard({ place, icon }: PlaceCardProps) {
   return (
-    <li className="rounded-xl bg-sand p-3 ring-1 ring-line">
+    <li className="rounded-xl bg-surface p-3 ring-1 ring-line">
       <div className="flex items-baseline justify-between gap-2">
-        <p className="flex items-center gap-1.5 font-medium text-bark">
+        <p className="flex items-center gap-1.5 font-medium text-ink">
           {icon && (
-            <span aria-hidden className="text-clay">
+            <span aria-hidden className="text-accent">
               {icon}
             </span>
           )}

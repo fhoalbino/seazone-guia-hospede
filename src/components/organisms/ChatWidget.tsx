@@ -47,7 +47,7 @@ export function ChatWidget({ code }: { code: string }) {
         onClick={() => setOpen(true)}
         whileTap={{ scale: 0.9 }}
         whileHover={{ scale: 1.05 }}
-        className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-clay text-white shadow-lg"
+        className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg"
         aria-label="Abrir assistente virtual"
       >
         <MessageCircle className="h-6 w-6" />
@@ -105,7 +105,7 @@ export function ChatWidget({ code }: { code: string }) {
                         key={q}
                         type="button"
                         onClick={() => send(q)}
-                        className="rounded-xl bg-slate-50 px-3 py-2 text-left text-sm text-slate-700 ring-1 ring-slate-200 transition hover:bg-clay/10 hover:ring-clay/30"
+                        className="rounded-xl bg-slate-50 px-3 py-2 text-left text-sm text-slate-700 ring-1 ring-slate-200 transition hover:bg-accent/10 hover:ring-accent/30"
                       >
                         {q}
                       </button>
@@ -126,7 +126,7 @@ export function ChatWidget({ code }: { code: string }) {
                     <span
                       className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
                         m.role === "user"
-                          ? "whitespace-pre-wrap bg-clay text-white"
+                          ? "whitespace-pre-wrap bg-accent text-white"
                           : "bg-slate-100 text-slate-800"
                       }`}
                     >
@@ -173,12 +173,12 @@ export function ChatWidget({ code }: { code: string }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Digite sua pergunta…"
-                className="flex-1 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-800 ring-1 ring-slate-200 outline-none focus:ring-clay/50"
+                className="flex-1 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-800 ring-1 ring-slate-200 outline-none focus:ring-accent/50"
               />
               <button
                 type="submit"
                 disabled={busy || !input.trim()}
-                className="rounded-xl bg-clay px-4 py-2 text-sm font-medium text-white transition hover:bg-clay-dark disabled:opacity-40"
+                className="rounded-xl bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-strong disabled:opacity-40"
               >
                 Enviar
               </button>

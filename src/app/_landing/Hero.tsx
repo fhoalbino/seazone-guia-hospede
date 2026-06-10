@@ -15,9 +15,9 @@ const item: Variants = {
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#2a211b] text-white">
-      {/* Brilho radial quente */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(194,107,74,0.28),transparent)]" />
+    <section className="relative overflow-hidden bg-[#0B1E3D] text-white">
+      {/* Brilho radial azul */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(14,165,233,0.22),transparent)]" />
 
       <div className="relative mx-auto max-w-5xl px-6 pb-36 pt-20 text-center sm:pb-44 sm:pt-28">
         <motion.div
@@ -27,7 +27,7 @@ export function Hero() {
           className="flex flex-col items-center gap-7"
         >
           <motion.div variants={item}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#e8a87c]/30 bg-[#e8a87c]/10 px-4 py-1.5 text-sm font-medium text-[#e8a87c]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#38bdf8]/30 bg-[#38bdf8]/10 px-4 py-1.5 text-sm font-medium text-[#38bdf8]">
               <Sparkles className="h-3.5 w-3.5" />
               Guia gerado por IA · Assistente em tempo real
             </span>
@@ -38,12 +38,12 @@ export function Hero() {
             className="max-w-3xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-6xl"
           >
             Tudo sobre sua estadia,{" "}
-            <span className="text-[#e8a87c]">na palma da mão</span>
+            <span className="text-[#38bdf8]">na palma da mão</span>
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="max-w-xl text-lg leading-relaxed text-[#d8ccbd]"
+            className="max-w-xl text-lg leading-relaxed text-[#94a3b8]"
           >
             Guia digital personalizado por imóvel: acesso, WiFi, regras,
             experiências locais e assistente virtual — tudo em um link.
@@ -52,7 +52,7 @@ export function Hero() {
           <motion.div variants={item} className="flex flex-wrap justify-center gap-3">
             <Link
               href="/FLN001"
-              className="inline-flex items-center gap-2 rounded-full bg-clay px-6 py-3 font-semibold text-white shadow-lg shadow-clay/25 transition hover:bg-clay-dark"
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-white shadow-lg shadow-accent/25 transition hover:bg-accent-strong"
             >
               Ver guia de exemplo
               <ArrowRight className="h-4 w-4" />
@@ -68,7 +68,7 @@ export function Hero() {
           {/* Stats row */}
           <motion.div
             variants={item}
-            className="mt-4 flex flex-wrap justify-center gap-8 text-sm text-[#b3a596]"
+            className="mt-4 flex flex-wrap justify-center gap-8 text-sm text-[#94a3b8]"
           >
             {[
               { n: "12+", label: "imóveis disponíveis" },

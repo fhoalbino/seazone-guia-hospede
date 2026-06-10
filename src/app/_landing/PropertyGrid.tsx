@@ -28,10 +28,10 @@ function Card({ p }: { p: PropertyCard }) {
     <motion.div variants={card} className="h-full">
       <Link
         href={`/${p.code}`}
-        className="group flex h-full flex-col overflow-hidden rounded-3xl bg-cream shadow-[0_2px_24px_rgba(58,46,38,0.06)] ring-1 ring-line transition hover:shadow-md hover:ring-clay"
+        className="group flex h-full flex-col overflow-hidden rounded-3xl bg-card shadow-[0_2px_24px_rgba(16,42,67,0.06)] ring-1 ring-line transition hover:shadow-md hover:ring-accent"
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-sand">
+        <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-surface">
           {p.image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -49,8 +49,8 @@ function Card({ p }: { p: PropertyCard }) {
           <span
             className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-xs font-medium ${
               p.type === "seed"
-                ? "bg-cream/90 text-bark"
-                : "bg-clay/90 text-white"
+                ? "bg-card/90 text-ink"
+                : "bg-accent/90 text-white"
             }`}
           >
             {p.type === "seed" ? "Exemplo" : "Seazone"}
@@ -59,14 +59,14 @@ function Card({ p }: { p: PropertyCard }) {
 
         {/* Info */}
         <div className="flex flex-1 flex-col p-4">
-          <p className="line-clamp-2 min-h-[3.25rem] font-display text-lg font-semibold leading-snug text-bark">
+          <p className="line-clamp-2 min-h-[3.25rem] font-display text-lg font-semibold leading-snug text-ink">
             {p.name}
           </p>
           <div className="mt-auto flex items-center justify-between pt-2">
-            <p className="text-sm text-stone">
+            <p className="text-sm text-muted">
               {p.city} — {p.state}
             </p>
-            <span className="font-mono text-xs text-clay">/{p.code}</span>
+            <span className="font-mono text-xs text-accent">/{p.code}</span>
           </div>
         </div>
       </Link>
@@ -79,16 +79,16 @@ export function PropertyGrid({ properties }: { properties: PropertyCard[] }) {
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <section ref={ref} id="imoveis" className="bg-sand py-20 px-6">
+    <section ref={ref} id="imoveis" className="bg-surface py-20 px-6">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10 text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-clay">
+          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
             Guias disponíveis
           </p>
-          <h2 className="mt-2 font-display text-3xl font-semibold text-bark sm:text-4xl">
+          <h2 className="mt-2 font-display text-3xl font-semibold text-ink sm:text-4xl">
             Explore os imóveis
           </h2>
-          <p className="mt-3 text-stone">
+          <p className="mt-3 text-muted">
             Clique em qualquer imóvel para abrir o guia completo do hóspede.
           </p>
         </div>

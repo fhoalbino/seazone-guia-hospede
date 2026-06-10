@@ -10,7 +10,7 @@ export default function OGImage() {
     (
       <div
         style={{
-          background: "#2a211b",
+          background: "#0B1E3D",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -31,7 +31,7 @@ export default function OGImage() {
             right: -100,
             width: 700,
             height: 700,
-            background: "radial-gradient(ellipse, rgba(194,107,74,0.32) 0%, transparent 65%)",
+            background: "radial-gradient(ellipse, rgba(14,165,233,0.32) 0%, transparent 65%)",
             borderRadius: "50%",
           }}
         />
@@ -43,7 +43,7 @@ export default function OGImage() {
             left: -100,
             width: 500,
             height: 500,
-            background: "radial-gradient(ellipse, rgba(232,168,124,0.14) 0%, transparent 65%)",
+            background: "radial-gradient(ellipse, rgba(56,189,248,0.14) 0%, transparent 65%)",
             borderRadius: "50%",
           }}
         />
@@ -52,8 +52,8 @@ export default function OGImage() {
         <div style={{ display: "flex", alignItems: "center", gap: 16, zIndex: 1 }}>
           <div
             style={{
-              background: "rgba(232,168,124,0.15)",
-              border: "1px solid rgba(232,168,124,0.4)",
+              background: "rgba(56,189,248,0.15)",
+              border: "1px solid rgba(56,189,248,0.4)",
               borderRadius: 100,
               padding: "10px 24px",
               display: "flex",
@@ -61,8 +61,8 @@ export default function OGImage() {
               gap: 10,
             }}
           >
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#e8a87c" }} />
-            <span style={{ color: "#e8a87c", fontSize: 22, fontWeight: 600, letterSpacing: 0.5 }}>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#38bdf8" }} />
+            <span style={{ color: "#38bdf8", fontSize: 22, fontWeight: 600, letterSpacing: 0.5 }}>
               seazone · guia do hóspede
             </span>
           </div>
@@ -83,7 +83,7 @@ export default function OGImage() {
           </div>
           <div
             style={{
-              color: "#e8a87c",
+              color: "#38bdf8",
               fontSize: 88,
               fontWeight: 900,
               lineHeight: 1.0,
@@ -94,7 +94,7 @@ export default function OGImage() {
           </div>
           <div
             style={{
-              color: "#d8ccbd",
+              color: "#94a3b8",
               fontSize: 30,
               fontWeight: 400,
               marginTop: 8,
@@ -123,8 +123,8 @@ export default function OGImage() {
             { n: "24h", label: "assistente virtual" },
           ].map(({ n, label }) => (
             <div key={label} style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-              <span style={{ color: "#e8a87c", fontSize: 32, fontWeight: 800 }}>{n}</span>
-              <span style={{ color: "#b3a596", fontSize: 20 }}>{label}</span>
+              <span style={{ color: "#38bdf8", fontSize: 32, fontWeight: 800 }}>{n}</span>
+              <span style={{ color: "#94a3b8", fontSize: 20 }}>{label}</span>
             </div>
           ))}
         </div>
