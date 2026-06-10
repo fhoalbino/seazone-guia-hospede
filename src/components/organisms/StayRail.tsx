@@ -22,7 +22,7 @@ export function StayRail({ property }: { property: Property }) {
   const cover = property.images[0];
 
   return (
-    <aside className="lg:sticky lg:top-6 lg:self-start">
+    <aside className="lg:sticky lg:top-20 lg:self-start">
       <div className="overflow-hidden rounded-3xl bg-card shadow-[0_2px_24px_rgba(16,42,67,0.08)] ring-1 ring-line">
         {/* Hero */}
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink/10">

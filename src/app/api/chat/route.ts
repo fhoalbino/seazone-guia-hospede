@@ -1,4 +1,4 @@
-import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { convertToModelMessages, smoothStream, streamText, type UIMessage } from "ai";
 import { chatModel } from "@/lib/ai";
 import { cjkStripTransform } from "@/lib/chat-stream";
 import { prisma } from "@/lib/db";
@@ -51,7 +51,14 @@ export async function POST(req: Request) {
     model: chatModel,
     system,
     messages: await convertToModelMessages(messages),
-    experimental_transform: cjkStripTransform(),
+    // 1) limpa CJK de cada delta; 2) smoothStream re-fatia em palavras com um
+    // pequeno atraso → efeito de "digitando". O MiniMax (modelo de raciocínio)
+    // às vezes despeja a resposta em poucos chunks grandes; sem isso o texto
+    // aparece "de uma vez". Garante a aparição progressiva que o desafio pede.
+    experimental_transform: [
+      cjkStripTransform(),
+      smoothStream({ delayInMs: 18, chunking: "word" }),
+    ],
   });
 
   return result.toUIMessageStreamResponse();

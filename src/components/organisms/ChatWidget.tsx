@@ -5,7 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Drawer } from "vaul";
 import { AnimatePresence, motion } from "motion/react";
-import { MessageCircle, Trash2, X } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageCircle, Trash2, X } from "lucide-react";
 import { Markdown } from "@/components/atoms/Markdown";
 
 const SUGGESTIONS = [
@@ -26,6 +26,12 @@ export function ChatWidget({ code }: { code: string }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
 
+  // Expansão do drawer no mobile: o usuário pode subir até o topo (botão) e o
+  // teclado expande sozinho (mais área de leitura acima do campo). Controlado
+  // por estado/altura CSS — diferente dos snapPoints do Vaul, mantém o input
+  // sempre visível no rodapé. Reinicia (recolhido) a cada abertura, no handler.
+  const [expanded, setExpanded] = useState(false);
+
   const { messages, sendMessage, regenerate, setMessages, status, error } =
     useChat({
       transport: new DefaultChatTransport({ api: "/api/chat", body: { code } }),
@@ -33,17 +39,17 @@ export function ChatWidget({ code }: { code: string }) {
 
   const busy = status === "submitted" || status === "streaming";
 
-  // Vaul reposiciona o drawer (style.bottom/height inline) quando o teclado
-  // mobile abre. Se o foco sai do input ao fechar (toque em Enviar/sugestão), o
-  // reset interno dele não zera o `bottom` e o drawer fica "flutuando". Quando o
-  // teclado fecha, limpamos os estilos inline para o CSS reassumir a posição.
+  // Teclado mobile: ao abrir, expande o drawer (mais área de leitura acima do
+  // campo); ao fechar, recolhe e limpa os estilos inline que o Vaul deixou
+  // (style.bottom/height) para o CSS reassumir a posição.
   const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const vv = window.visualViewport;
     if (!open || !vv) return;
     function onResize() {
-      const keyboardClosed = window.innerHeight - vv!.height < 60;
-      if (!keyboardClosed) return;
+      const keyboardOpen = window.innerHeight - vv!.height >= 60;
+      setExpanded(keyboardOpen);
+      if (keyboardOpen) return;
       requestAnimationFrame(() => {
         const el = contentRef.current;
         if (!el) return;
@@ -76,7 +82,10 @@ export function ChatWidget({ code }: { code: string }) {
     <>
       <motion.button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setExpanded(false);
+          setOpen(true);
+        }}
         whileTap={{ scale: 0.9 }}
         whileHover={{ scale: 1.05 }}
         className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg"
@@ -90,7 +99,9 @@ export function ChatWidget({ code }: { code: string }) {
           <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
           <Drawer.Content
             ref={contentRef}
-            className="fixed inset-x-0 bottom-0 z-50 flex h-[82dvh] flex-col overflow-hidden rounded-t-2xl bg-white outline-none sm:inset-x-auto sm:right-5 sm:h-[620px] sm:w-[26rem]"
+            className={`fixed inset-x-0 bottom-0 z-50 flex flex-col overflow-hidden bg-white outline-none transition-[height] duration-200 sm:inset-x-auto sm:right-5 sm:h-[620px] sm:w-[26rem] sm:rounded-t-2xl ${
+              expanded ? "h-[100dvh] rounded-t-none" : "h-[80dvh] rounded-t-2xl"
+            }`}
           >
             {/* alça de arrastar (mobile) */}
             <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-slate-300 sm:hidden" />
@@ -105,6 +116,19 @@ export function ChatWidget({ code }: { code: string }) {
                 </Drawer.Description>
               </div>
               <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setExpanded((v) => !v)}
+                  className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 sm:hidden"
+                  aria-label={expanded ? "Recolher" : "Expandir até o topo"}
+                  title={expanded ? "Recolher" : "Expandir até o topo"}
+                >
+                  {expanded ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronUp className="h-4 w-4" />
+                  )}
+                </button>
                 {messages.length > 0 && (
                   <button
                     type="button"
