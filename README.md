@@ -40,7 +40,7 @@ Pré-requisitos: Node 20+ e um banco Postgres (recomendado: [Neon](https://neon.
 
 ```bash
 npm install
-cp .env.example .env        # preencha DATABASE_URL e MINIMAX_API_KEY
+cp .env.example .env        # preencha DATABASE_URL, MINIMAX_API_KEY e GOOGLE_API_KEY
 npm run db:migrate          # cria as tabelas
 npm run db:seed             # popula os 2 imóveis de exemplo
 npm run dev                 # http://localhost:3000
@@ -59,35 +59,90 @@ como `http://localhost:3000/AMC0204` (buscado na API da Seazone).
 
 ## Testes
 
+A suíte tem três camadas, da mais rápida e isolada à mais próxima do usuário real.
+
 ```bash
-npm test          # Vitest: unitários (camada pura) + componente (jsdom)
-npm run test:e2e  # Playwright: fluxos de ponta a ponta (precisa do app + browser)
+npm test          # Vitest: unitários (Node) + componente (jsdom)
+npm run test:e2e  # Playwright: fluxos de ponta a ponta (sobe o app + browser)
 ```
 
-- **Unitários** cobrem a camada pura: formatação/labels, `formatDistance`, o mock
-  determinístico da estadia (`operational-mock`) e, principalmente, a **montagem
-  do contexto do assistente** (credenciais, regras, guia e a regra de _grounding_
-  anti-alucinação entram no system prompt).
-- **Componente** (React Testing Library): `CopyField`, `AccessCard`, `RulesCard`,
-  `AmenityList`.
-- **E2E** (Playwright): página do imóvel + tela de erro 404, geração do guia por
-  região e o chat respondendo as perguntas do desafio (WiFi, pets, check-in).
-- O Playwright sobe o dev server automaticamente. O browser usa o Chromium do
-  sistema (`channel`/`executablePath` em `playwright.config.ts`); instale com
-  `npx playwright install chromium` ou aponte para um Chromium já instalado.
+### Unitários (Vitest, ambiente Node)
 
-Os hooks de git rodam isso automaticamente: **pre-commit** roda lint + Vitest;
-**pre-push** roda o Playwright. O **CI** (GitHub Actions) roda lint, type check e
-Vitest a cada push/PR.
+Cobrem a lógica pura, sem rede nem DOM:
+
+- `labels`: tradução de amenidades/tipos de acesso, formatação de telefone BR e
+  link de WhatsApp.
+- `formatDistance`: conversão de metros para texto PT-BR ("Aprox. 1,2 km").
+- `operational-mock`: determinismo (mesmo código gera sempre os mesmos segredos)
+  e formato dos campos (senha de 4 dígitos, telefone +55).
+- `chat-context` (o mais importante): garante que a montagem do system prompt do
+  assistente inclui as credenciais reais, regras, o guia da região e a regra de
+  _grounding_ anti-alucinação. É o que sustenta a promessa de "não inventa".
+
+### Componente (Vitest + React Testing Library, ambiente jsdom)
+
+Renderizam componentes isolados e verificam comportamento, não implementação:
+`CopyField` (botão copiar muda para "Copiado" e volta), `AccessCard` (WiFi, tipo
+de acesso traduzido, estacionamento condicional), `RulesCard` (horários e
+políticas) e `AmenityList` (labels traduzidos, filtra inativas, fallback).
+
+### E2E (Playwright, navegador real)
+
+Exercitam a aplicação inteira rodando, contra o banco:
+
+- **Página do imóvel + erro:** `/FLN001` carrega com nome, WiFi, check-in e
+  política de animais; código inexistente cai na tela de erro amigável.
+- **Guia de experiências:** o feedback de carregamento aparece, o conteúdo do guia
+  é renderizado e o guia de `FLN001` (Florianópolis) difere do de `GRM001`
+  (Gramado), provando a contextualização por endereço.
+- **Assistente virtual:** o chat abre, responde **as 4 perguntas do desafio**
+  (senha do WiFi, pets, check-in, restaurantes) e a resposta da senha contém
+  exatamente `floripa2024`, validando o grounding nos dados reais.
+
+> Os testes E2E rodando em paralelo numa base limpa expuseram (e levaram à
+> correção de) uma **race condition real** na geração do guia: dois acessos
+> simultâneos a um imóvel ainda sem guia disparavam dois `INSERT` concorrentes que
+> colidiam na constraint única. `getOrCreateGuide` agora trata isso de forma
+> idempotente (`src/lib/guide.ts`). É um bug que afetaria hóspedes em produção,
+> não só o teste.
+
+O Playwright sobe o dev server sozinho (`webServer` no `playwright.config.ts`).
+Para o browser, instale com `npx playwright install chromium`; em ambientes sem
+build empacotado (ex: Ubuntu pré-release) ele cai para o Chromium do sistema via
+`executablePath`, controlável por `PLAYWRIGHT_CHROMIUM_PATH`.
+
+## Pipeline de CI/CD
+
+Automação em camadas, equilibrando velocidade, custo e confiança:
+
+| Gatilho | O que roda | Onde |
+| ------- | ---------- | ---- |
+| **pre-commit** (local) | `lint-staged` + Vitest | Husky |
+| **pre-push** (local) | Suíte E2E completa (Playwright) | Husky |
+| **push / PR → `main`** | lint + `tsc --noEmit` + Vitest | GitHub Actions (`ci.yml`) |
+| **release publicada** | Suíte E2E completa | GitHub Actions (`e2e.yml`) |
+
+- O **CI por push** é rápido e barato (sem rede externa), então roda a cada push:
+  é a rede de segurança imediata. Gera o client Prisma e os tipos de rota do Next
+  (`next typegen`) antes do type check.
+- O **E2E por release** é mais pesado (faz chamadas reais de IA e geocoding), por
+  isso roda só ao publicar uma release, não a cada push. É **100% autônomo**: sobe
+  um **Postgres efêmero** (service container), aplica migrations, roda o seed
+  (`FLN001`/`GRM001`), instala o browser e executa o Playwright. As chaves de IA
+  ficam em **GitHub Secrets** (criptografadas, nunca no código nem nos logs).
+- A Vercel faz o deploy de produção automaticamente a partir da `main`.
 
 ## Decisões técnicas
 
-- **Camada de dados híbrida.** `getProperty(code)` resolve em duas fontes: primeiro
-  o seed local (imóveis-exemplo do desafio, `FLN001`/`GRM001`), e, se não encontrar,
-  a **API pública da Seazone** (`/properties/{code}/details` + amenidades) —
-  qualquer código real funciona (ex: `AMC0204`). Persistência em Postgres via
-  Prisma 7 com driver adapter (`@prisma/adapter-pg`); a mesma `DATABASE_URL` serve
-  dev e produção.
+- **Camada de dados híbrida + integração com a API da Seazone.** `getProperty(code)`
+  resolve em duas fontes, nesta ordem: (1) o seed local (imóveis-exemplo do desafio,
+  `FLN001`/`GRM001`); (2) se não encontrar, a **API pública da Seazone**
+  (`src/lib/seazone-api.ts`), que busca `/properties/{code}/details` e as amenidades,
+  e normaliza a resposta (snake_case da API para o tipo de domínio em camelCase).
+  Resultado: **qualquer código real de imóvel da Seazone funciona** (ex: `AMC0204`,
+  `CDK0011`, `SPT0205`), não só os dois do desafio, e o guia se adapta à localização
+  real de cada um. Persistência em Postgres via Prisma 7 com driver adapter
+  (`@prisma/adapter-pg`); a mesma `DATABASE_URL` serve dev e produção.
 - **Fronteira de dados sensíveis.** A API pública não expõe segredos da estadia
   (senha do WiFi, código da fechadura, telefone do anfitrião) — eles só são
   liberados ao hóspede após a reserva, via endpoint autenticado (com PIN). Para a
@@ -100,9 +155,15 @@ Vitest a cada push/PR.
   tudo para a IA **curar e descrever** com `generateObject` + Zod. Se o Google
   falhar, faz fallback para geração sem ancoragem (não quebra). Persiste o
   resultado — atende à regra de "não regenerar a cada acesso".
-- **Feedback de carregamento via React Suspense.** O guia é um Server Component
-  assíncrono dentro de `<Suspense>`; o skeleton transmite enquanto a IA gera,
-  sem custo de client fetch.
+- **Carregamento em paralelo do guia.** A página do imóvel renderiza na hora com
+  todos os dados da estadia; o guia de experiências (que depende de IA + Google e
+  pode levar alguns segundos na 1ª vez) carrega à parte, sem bloquear o resto.
+  `ExperienceGuideClient` busca `/api/guide/{code}` e exibe um skeleton enquanto a
+  IA gera, dando feedback visual claro como pede o desafio.
+- **Otimização de bundle.** O `ChatWidget` (que carrega `vaul`, `motion` e
+  `react-markdown`) é importado via `next/dynamic` num wrapper client, então só
+  baixa quando o usuário abre o chat. Isso tira ~222KB do JS inicial da página
+  (de ~460KB para ~238KB gzip), o que pesa especialmente em conexões lentas.
 - **Chat com grounding.** O system prompt (em `lib/chat-context.ts`) injeta todos
   os dados do imóvel + guia e instrui o modelo a responder **somente** com base
   neles. Streaming via `streamText` + `toUIMessageStreamResponse`.
@@ -122,10 +183,16 @@ Vitest a cada push/PR.
 ## Estrutura
 
 ```
+.github/workflows/ ci.yml (push/PR) e e2e.yml (release)
+.husky/            hooks de pre-commit e pre-push
 prisma/            schema, migrations e seed
 src/
-  app/             rotas (/[code], home, api/chat)
-  components/      atoms, molecules, organisms
-  lib/             db, ai, properties, seazone-api, places, weather, guide, chat-context, labels, types
+  app/             rotas (/[code], home, api/chat, api/guide)
+  components/      atoms, molecules, organisms (+ .test.tsx ao lado)
+  lib/             db, ai, properties, seazone-api, places, weather, guide,
+                   chat-context, labels, types (+ .test.ts ao lado)
+  e2e/             specs Playwright (property-page, guide, chat)
+  test/            setup do Vitest (jest-dom)
   generated/       client Prisma (gerado)
+playwright.config.ts · vitest.config.ts
 ```
