@@ -60,12 +60,25 @@ como `http://localhost:3000/AMC0204` (buscado na API da Seazone).
 ## Testes
 
 ```bash
-npm test
+npm test          # Vitest: unitários (camada pura) + componente (jsdom)
+npm run test:e2e  # Playwright: fluxos de ponta a ponta (precisa do app + browser)
 ```
 
-Cobrem a camada pura: formatação/labels e, principalmente, a **montagem do
-contexto do assistente** (garante que credenciais, regras, guia e a regra de
-_grounding_ anti-alucinação entram no system prompt).
+- **Unitários** cobrem a camada pura: formatação/labels, `formatDistance`, o mock
+  determinístico da estadia (`operational-mock`) e, principalmente, a **montagem
+  do contexto do assistente** (credenciais, regras, guia e a regra de _grounding_
+  anti-alucinação entram no system prompt).
+- **Componente** (React Testing Library): `CopyField`, `AccessCard`, `RulesCard`,
+  `AmenityList`.
+- **E2E** (Playwright): página do imóvel + tela de erro 404, geração do guia por
+  região e o chat respondendo as perguntas do desafio (WiFi, pets, check-in).
+- O Playwright sobe o dev server automaticamente. O browser usa o Chromium do
+  sistema (`channel`/`executablePath` em `playwright.config.ts`); instale com
+  `npx playwright install chromium` ou aponte para um Chromium já instalado.
+
+Os hooks de git rodam isso automaticamente: **pre-commit** roda lint + Vitest;
+**pre-push** roda o Playwright. O **CI** (GitHub Actions) roda lint, type check e
+Vitest a cada push/PR.
 
 ## Decisões técnicas
 
