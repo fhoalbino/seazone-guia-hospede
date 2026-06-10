@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { motion, useInView, type Variants } from "motion/react";
 import { useRef } from "react";
 import { MapPin, MessageCircle, KeyRound, Zap } from "lucide-react";
 
@@ -35,13 +35,13 @@ const features = [
   },
 ];
 
-const container = {
+const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.1 } },
 };
-const card = {
+const card: Variants = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
 };
 
 export function Features() {

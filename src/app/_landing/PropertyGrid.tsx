@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { motion, useInView, type Variants } from "motion/react";
 import { useRef } from "react";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
@@ -14,13 +14,13 @@ export interface PropertyCard {
   image?: string;
 }
 
-const container = {
+const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06 } },
 };
-const card = {
+const card: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
 };
 
 function Card({ p }: { p: PropertyCard }) {
