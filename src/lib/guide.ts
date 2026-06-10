@@ -32,6 +32,30 @@ const guideSchema = z.object({
 
 type GuideObject = z.infer<typeof guideSchema>;
 
+/** Remove caracteres CJK que o MiniMax às vezes insere apesar do prompt. */
+function stripCJK(text: string): string {
+  return text
+    .replace(/[　-鿿豈-￯]+/g, "")
+    .replace(/[,\s]+$/, "")
+    .replace(/^[,\s]+/, "")
+    .trim();
+}
+
+function sanitizeGuide(obj: GuideObject): GuideObject {
+  const place = (p: { name: string; distance: string; description: string }) => ({
+    ...p,
+    name: stripCJK(p.name),
+    description: stripCJK(p.description),
+  });
+  return {
+    welcomeMessage: stripCJK(obj.welcomeMessage),
+    seasonalTip: stripCJK(obj.seasonalTip),
+    restaurants: obj.restaurants.map(place),
+    attractions: obj.attractions.map(place),
+    essentials: obj.essentials.map((e) => ({ ...place(e), type: stripCJK(e.type) })),
+  };
+}
+
 /** Gera o objeto do guia com retry — modelos de raciocínio às vezes falham o structured output. */
 async function generateGuideObject(prompt: string): Promise<GuideObject> {
   let lastErr: unknown;
@@ -42,7 +66,7 @@ async function generateGuideObject(prompt: string): Promise<GuideObject> {
         schema: guideSchema,
         prompt,
       });
-      return object;
+      return sanitizeGuide(object);
     } catch (err) {
       lastErr = err;
     }
