@@ -1,8 +1,9 @@
-// Integração Google Maps Platform: geocoding + Places (New) Nearby Search.
+// Integração Google Maps Platform: geocoding + Places (New) Nearby Search + Distance Matrix.
 // Fornece lugares REAIS próximos ao imóvel para ancorar o guia gerado por IA.
 
 const GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 const NEARBY_URL = "https://places.googleapis.com/v1/places:searchNearby";
+const DISTANCE_MATRIX_URL = "https://maps.googleapis.com/maps/api/distancematrix/json";
 
 export interface LatLng {
   lat: number;
@@ -27,10 +28,10 @@ function apiKey(): string {
   return k;
 }
 
-function formatDistance(km: number): string {
-  const meters = Math.round(km * 1000);
+function formatDistance(meters: number): string {
   if (meters < 60) return "a poucos passos";
-  if (km < 1) return `Aprox. ${meters} m`;
+  if (meters < 1000) return `Aprox. ${meters} m`;
+  const km = meters / 1000;
   return `Aprox. ${km.toFixed(1).replace(".", ",")} km`;
 }
 
@@ -45,31 +46,23 @@ export async function geocodeAddress(address: string): Promise<LatLng | null> {
   return { lat: loc.lat, lng: loc.lng };
 }
 
-/** Distância em linha reta entre dois pontos (fórmula de Haversine). */
-function haversineKm(a: LatLng, b: LatLng): number {
-  const R = 6371;
-  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((a.lat * Math.PI) / 180) *
-      Math.cos((b.lat * Math.PI) / 180) *
-      Math.sin(dLng / 2) ** 2;
-  return R * 2 * Math.asin(Math.sqrt(h));
-}
-
 interface PlacesApiPlace {
   displayName?: { text?: string };
   location?: { latitude?: number; longitude?: number };
 }
 
-/** Busca lugares próximos de dados tipos via Places API (New). */
+interface PlaceRaw {
+  name: string;
+  location: LatLng;
+}
+
+/** Busca lugares próximos via Places API (New). Retorna nome + coordenadas do lugar. */
 async function searchNearby(
   origin: LatLng,
   includedTypes: string[],
   maxResultCount: number,
   radiusMeters = 3000,
-): Promise<{ name: string; distanceMeters: number }[]> {
+): Promise<PlaceRaw[]> {
   const res = await fetch(NEARBY_URL, {
     method: "POST",
     headers: {
@@ -95,31 +88,49 @@ async function searchNearby(
   const places: PlacesApiPlace[] = data.places ?? [];
   return places
     .filter((p) => p.displayName?.text && p.location?.latitude != null)
-    .map((p) => {
-      const placeLatLng: LatLng = {
-        lat: p.location!.latitude!,
-        lng: p.location!.longitude!,
-      };
-      return {
-        name: p.displayName!.text!,
-        distanceMeters: Math.round(haversineKm(origin, placeLatLng) * 1000),
-      };
-    });
+    .map((p) => ({
+      name: p.displayName!.text!,
+      location: { lat: p.location!.latitude!, lng: p.location!.longitude! },
+    }));
+}
+
+/**
+ * Busca distâncias de carro (metros) de um ponto de origem para uma lista de
+ * destinos via Distance Matrix API. Retorna array na mesma ordem dos destinos.
+ * Fallback: 0 se a rota não existir ou a API falhar.
+ */
+async function getDrivingDistances(
+  origin: LatLng,
+  destinations: LatLng[],
+): Promise<number[]> {
+  if (destinations.length === 0) return [];
+  const destStr = destinations.map((d) => `${d.lat},${d.lng}`).join("|");
+  const url =
+    `${DISTANCE_MATRIX_URL}?origins=${origin.lat},${origin.lng}` +
+    `&destinations=${encodeURIComponent(destStr)}` +
+    `&mode=driving&language=pt-BR&key=${apiKey()}`;
+  const res = await fetch(url, { next: { revalidate: 86400 } });
+  if (!res.ok) return destinations.map(() => 0);
+  const data = await res.json();
+  const elements: { status: string; distance?: { value: number } }[] =
+    data.rows?.[0]?.elements ?? [];
+  return elements.map((el) => (el.status === "OK" ? (el.distance?.value ?? 0) : 0));
 }
 
 function toNearby(
-  items: { name: string; distanceMeters: number }[],
+  items: { name: string; drivingMeters: number }[],
   type?: string,
 ): NearbyPlace[] {
   return items.map((it) => ({
     name: it.name,
-    distance: formatDistance(it.distanceMeters / 1000),
+    distance: formatDistance(it.drivingMeters),
     ...(type ? { type } : {}),
   }));
 }
 
 /**
  * Reúne lugares reais próximos para alimentar o guia.
+ * Distâncias calculadas via Distance Matrix API (carro).
  * Lança se a API falhar — o chamador faz fallback para geração sem ancoragem.
  */
 export async function getNearbyForGuide(origin: LatLng): Promise<NearbyResult> {
@@ -132,13 +143,27 @@ export async function getNearbyForGuide(origin: LatLng): Promise<NearbyResult> {
       searchNearby(origin, ["hospital"], 1, 10000),
     ]);
 
+  // Uma chamada em batch para a Distance Matrix com todos os destinos de uma vez.
+  const groups = [restaurants, attractions, pharmacies, markets, hospitals];
+  const allPlaces = groups.flat();
+  const drivingDistances = await getDrivingDistances(
+    origin,
+    allPlaces.map((p) => p.location),
+  );
+
+  // Reanexa distâncias na ordem original dos grupos.
+  let idx = 0;
+  const [r, a, ph, mk, ho] = groups.map((group) =>
+    group.map((place) => ({ name: place.name, drivingMeters: drivingDistances[idx++] ?? 0 })),
+  );
+
   return {
-    restaurants: toNearby(restaurants),
-    attractions: toNearby(attractions),
+    restaurants: toNearby(r),
+    attractions: toNearby(a),
     essentials: [
-      ...toNearby(pharmacies, "pharmacy"),
-      ...toNearby(markets, "supermarket"),
-      ...toNearby(hospitals, "hospital"),
+      ...toNearby(ph, "pharmacy"),
+      ...toNearby(mk, "supermarket"),
+      ...toNearby(ho, "hospital"),
     ],
   };
 }
