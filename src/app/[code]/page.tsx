@@ -3,10 +3,7 @@ import type { Metadata } from "next";
 import { getAllPropertyCodes, getProperty } from "@/lib/properties";
 import { ExperienceGuideClient } from "@/components/organisms/ExperienceGuideClient";
 import { ChatWidget } from "@/components/organisms/ChatWidget";
-import { HeroSection, HeroSkeleton } from "./_sections/HeroSection";
-import { AccessSection, AccessSkeleton } from "./_sections/AccessSection";
-import { RulesSection, RulesSkeleton } from "./_sections/RulesSection";
-import { ContactSection, ContactSkeleton } from "./_sections/ContactSection";
+import { PropertySections, PropertySkeleton } from "./_sections/PropertySections";
 
 export async function generateStaticParams() {
   const codes = await getAllPropertyCodes();
@@ -32,23 +29,11 @@ export default async function PropertyGuidePage({
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-6">
-      <Suspense fallback={<HeroSkeleton />}>
-        <HeroSection code={code} />
-      </Suspense>
-
-      <Suspense fallback={<AccessSkeleton />}>
-        <AccessSection code={code} />
-      </Suspense>
-
-      <Suspense fallback={<RulesSkeleton />}>
-        <RulesSection code={code} />
+      <Suspense fallback={<PropertySkeleton />}>
+        <PropertySections code={code} />
       </Suspense>
 
       <ExperienceGuideClient key={code} code={code} />
-
-      <Suspense fallback={<ContactSkeleton />}>
-        <ContactSection code={code} />
-      </Suspense>
 
       <ChatWidget code={code} />
     </main>
