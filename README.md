@@ -174,8 +174,11 @@ Automação em camadas, equilibrando velocidade, custo e confiança:
 
 ## Melhorias futuras
 
-- Expor os lugares próximos como **tool de function-calling** no chat, para o
-  assistente consultar o Google Places sob demanda (resposta agêntica).
+- Hoje o chat conhece os lugares através do guia já gerado (que vem do Google
+  Places) injetado no system prompt. Uma evolução seria expor o Google Places como
+  **tool de function-calling** no próprio chat, deixando o assistente consultar
+  lugares **ao vivo e sob demanda** (resposta agêntica), inclusive os que não estão
+  no guia.
 - Integrar os dados sensíveis da estadia ao endpoint autenticado de reserva
   (`/reservations/details` com PIN), substituindo o mock de demonstração.
 - Cache/regeneração programada do guia (ex: atualizar a dica sazonal por mês).
