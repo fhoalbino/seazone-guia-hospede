@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { prisma } from "@/lib/db";
 import { fetchSeazoneProperty } from "@/lib/seazone-api";
 import type { Amenities, Property } from "@/lib/types";
@@ -57,7 +56,7 @@ function toProperty(row: PropertyRow): Property {
  * se não encontrar, consulta a API pública da Seazone (imóveis reais).
  * Retorna null se não existir em nenhuma fonte.
  */
-export const getProperty = cache(async function getProperty(code: string): Promise<Property | null> {
+export async function getProperty(code: string): Promise<Property | null> {
   const normalized = code.toUpperCase();
 
   const row = await prisma.property.findUnique({
@@ -66,7 +65,7 @@ export const getProperty = cache(async function getProperty(code: string): Promi
   if (row) return toProperty(row);
 
   return fetchSeazoneProperty(normalized);
-});
+}
 
 /** Lista todos os códigos de imóvel — usado para gerar páginas estáticas. */
 export async function getAllPropertyCodes(): Promise<string[]> {
