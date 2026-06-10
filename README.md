@@ -58,6 +58,21 @@ como `http://localhost:3000/AMC0204` (do snapshot salvo pelo seed).
 | `MINIMAX_API_KEY`   | Chave da API MiniMax (guia + chat)     |
 | `GOOGLE_API_KEY`    | Google Maps Platform (Geocoding + Places) |
 
+### Rodar com Docker
+
+Com o `.env` preenchido (e um banco já semeado via `npm run db:seed`):
+
+```bash
+docker compose up --build -d   # http://localhost:3000
+docker compose down            # encerra
+```
+
+Imagem multi-stage (`node:22-alpine`) servindo o bundle `standalone` do Next 16,
+~326 MB. A `DATABASE_URL` entra no build como secret do BuildKit (o
+`generateStaticParams` lê o banco ao gerar as páginas) e não fica gravada em
+nenhuma camada da imagem; em runtime as três variáveis vêm do `.env`
+(`env_file`). O `.env` nunca entra na imagem.
+
 ## Testes
 
 A suíte tem três camadas, da mais rápida e isolada à mais próxima do usuário real.
