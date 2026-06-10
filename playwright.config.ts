@@ -11,11 +11,15 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      // Ubuntu 26.04 (pré-release) não tem build empacotado do Playwright;
-      // usamos o Chromium do sistema instalado em /usr/bin.
       use: {
         ...devices["Desktop Chrome"],
-        launchOptions: { executablePath: "/usr/bin/chromium-browser" },
+        // No CI usamos o Chromium empacotado do Playwright. Localmente (Ubuntu
+        // 26.04, sem build empacotado) apontamos para o Chromium do sistema.
+        launchOptions: {
+          executablePath:
+            process.env.PLAYWRIGHT_CHROMIUM_PATH ??
+            (process.env.CI ? undefined : "/usr/bin/chromium-browser"),
+        },
       },
     },
   ],
@@ -23,6 +27,6 @@ export default defineConfig({
     command: "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: true,
-    timeout: 60_000,
+    timeout: 120_000,
   },
 });
