@@ -6,7 +6,7 @@ import { AccessCard } from "@/components/organisms/AccessCard";
 import { RulesCard } from "@/components/organisms/RulesCard";
 import { ContactCard } from "@/components/organisms/ContactCard";
 import { ExperienceGuideClient } from "@/components/organisms/ExperienceGuideClient";
-import { ChatWidget } from "@/components/organisms/ChatWidget";
+import { ChatWidgetLazy } from "@/components/organisms/ChatWidgetLazy";
 import { AmenityList } from "@/components/molecules/AmenityList";
 import { Section } from "@/components/atoms/Section";
 import { Reveal } from "@/components/atoms/Reveal";
@@ -77,7 +77,7 @@ export default async function PropertyGuidePage({
         <ContactCard host={property.host} address={property.address} />
       </Reveal>
 
-      <ChatWidget code={property.code} />
+      <ChatWidgetLazy code={property.code} />
     </main>
   );
 }
