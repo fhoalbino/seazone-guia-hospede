@@ -16,7 +16,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Guia Digital do Hóspede · Seazone",
   description:
-    "Tudo sobre sua estadia: acesso, WiFi, regras e dicas da região.",
+    "Guia digital por imóvel: acesso, WiFi, regras e experiências locais geradas por IA.",
+  openGraph: {
+    title: "Guia Digital do Hóspede · Seazone",
+    description:
+      "Guia digital por imóvel: acesso, WiFi, regras e experiências locais geradas por IA.",
+    siteName: "Seazone · Guia do Hóspede",
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Guia Digital do Hóspede · Seazone",
+    description:
+      "Guia digital por imóvel: acesso, WiFi, regras e experiências locais geradas por IA.",
+  },
 };
 
 export default function RootLayout({

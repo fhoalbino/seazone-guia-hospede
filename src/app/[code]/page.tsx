@@ -23,9 +23,23 @@ export async function generateMetadata({
   const { code } = await params;
   const property = await getProperty(code);
   if (!property) return { title: "Imóvel não encontrado · Guia Seazone" };
+  const title = `${property.name} · Guia do Hóspede`;
+  const description = `Tudo sobre sua estadia em ${property.address.city}: acesso, WiFi, regras e guia de experiências gerado por IA.`;
+  const image = property.images[0];
   return {
-    title: `${property.name} · Guia do Hóspede`,
-    description: `Tudo sobre sua estadia em ${property.address.city}.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      ...(image ? { images: [{ url: image, width: 1200, height: 630, alt: property.name }] } : {}),
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title,
+      description,
+      ...(image ? { images: [image] } : {}),
+    },
   };
 }
 
