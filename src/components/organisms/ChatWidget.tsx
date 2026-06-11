@@ -32,7 +32,6 @@ export function ChatWidget({ code }: { code: string }) {
     });
 
   const busy = status === "submitted" || status === "streaming";
-  const lastId = messages[messages.length - 1]?.id;
 
   // Teclado mobile: em vez de deixar o Vaul reposicionar (instável entre
   // aparelhos), assumimos o controle — encaixamos o drawer exatamente na área
@@ -167,42 +166,29 @@ export function ChatWidget({ code }: { code: string }) {
                 )}
 
                 <AnimatePresence initial={false}>
-                  {messages.map((m) => {
-                    const streamingThis =
-                      status === "streaming" &&
-                      m.role === "assistant" &&
-                      m.id === lastId;
-                    return (
-                      <motion.div
-                        key={m.id}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className={m.role === "user" ? "text-right" : "text-left"}
+                  {messages.map((m) => (
+                    <motion.div
+                      key={m.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className={m.role === "user" ? "text-right" : "text-left"}
+                    >
+                      <span
+                        className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
+                          m.role === "user"
+                            ? "whitespace-pre-wrap bg-accent text-white"
+                            : "bg-slate-100 text-slate-800"
+                        }`}
                       >
-                        <span
-                          className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
-                            m.role === "user"
-                              ? "whitespace-pre-wrap bg-accent text-white"
-                              : `bg-slate-100 text-slate-800${
-                                  streamingThis ? " chat-streaming" : ""
-                                }`
-                          }`}
-                        >
-                          {m.role === "user" ? (
-                            messageText(m.parts)
-                          ) : (
-                            <>
-                              <Markdown>{messageText(m.parts)}</Markdown>
-                              {streamingThis && (
-                                <span className="chat-caret" aria-hidden="true" />
-                              )}
-                            </>
-                          )}
-                        </span>
-                      </motion.div>
-                    );
-                  })}
+                        {m.role === "user" ? (
+                          messageText(m.parts)
+                        ) : (
+                          <Markdown>{messageText(m.parts)}</Markdown>
+                        )}
+                      </span>
+                    </motion.div>
+                  ))}
                 </AnimatePresence>
 
                 {status === "submitted" && (

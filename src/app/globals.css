@@ -46,28 +46,3 @@ body {
 .animate-kenburns {
   animation: kenburns 12s ease-out forwards;
 }
-
-/* Cursor "digitando" no fim da resposta do assistente enquanto faz streaming. */
-@keyframes caret-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-.chat-caret {
-  display: inline-block;
-  width: 2px;
-  height: 1.05em;
-  margin-left: 2px;
-  vertical-align: text-bottom;
-  border-radius: 1px;
-  background: currentColor;
-  animation: caret-blink 1s steps(1) infinite;
-}
-/* Mantém o caret na mesma linha do fim do texto (último parágrafo inline). */
-.chat-streaming > p:last-of-type {
-  display: inline;
-}
