@@ -74,6 +74,16 @@ export function ChatWidget({ code }: { code: string }) {
     if (nearBottom) el.scrollTop = el.scrollHeight;
   }, [messages, status]);
 
+  // Ao reabrir o chat, o conteúdo do drawer remonta (scrollTop = 0). Rola para o
+  // fim para mostrar a última mensagem da conversa já existente, não o topo.
+  useEffect(() => {
+    if (!open) return;
+    requestAnimationFrame(() => {
+      const el = scrollRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
+    });
+  }, [open]);
+
   function send(text: string) {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
@@ -94,15 +104,21 @@ export function ChatWidget({ code }: { code: string }) {
         <MessageCircle className="h-6 w-6" />
       </motion.button>
 
-      <Drawer.Root open={open} onOpenChange={setOpen} repositionInputs={false}>
+      <Drawer.Root
+        open={open}
+        onOpenChange={setOpen}
+        repositionInputs={false}
+        handleOnly
+      >
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
           <Drawer.Content
             ref={contentRef}
             className="fixed inset-x-0 bottom-0 z-50 flex h-[85dvh] flex-col overflow-hidden rounded-t-2xl bg-white outline-none sm:inset-x-auto sm:right-5 sm:h-[620px] sm:w-[26rem]"
           >
-            {/* alça de arrastar (mobile) */}
-            <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-slate-300 sm:hidden" />
+            {/* alça de arrastar (mobile) — handleOnly: só ela arrasta, o resto do
+                conteúdo fica livre para selecionar/copiar texto e rolar. */}
+            <Drawer.Handle className="my-3 shrink-0 sm:hidden" />
 
             <div className="flex items-start justify-between gap-2 px-4 pt-3 pb-2 sm:pt-4">
               <div>
@@ -175,7 +191,7 @@ export function ChatWidget({ code }: { code: string }) {
                       className={m.role === "user" ? "text-right" : "text-left"}
                     >
                       <span
-                        className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
+                        className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-sm select-text ${
                           m.role === "user"
                             ? "whitespace-pre-wrap bg-accent text-white"
                             : "bg-slate-100 text-slate-800"
